@@ -1,16 +1,16 @@
 <?php
 /**
- *	This file is a part of the sophwork project
- *	@Tested version : Sophwork.0.2.9
+ *	This file is a part of the Sophwork project
+ *	@version : Sophwork.0.3.0
  *	@author : Syu93
  *	--
  *	Sophpkwork module : ORM Data mapper
  *	Data mapper class
  */
 
-namespace sophwork\modules\kdm;
+namespace Sophwork\modules\kdm;
 
-use sophwork\modules\kdm\SophworkDMEntities;
+use Sophwork\modules\kdm\SophworkDMEntities;
 
 class SophworkDM{
 	public $link;

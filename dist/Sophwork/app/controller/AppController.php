@@ -1,18 +1,19 @@
 <?php
 /**
- *	This file is a part of the sophwork project
- *	@Tested version : Sophwork.0.2.9
+ *	This file is a part of the Sophwork project
+ *	@version : Sophwork.0.3.0
  *	@author : Syu93
  *	--
  *	Main controller class
  */
 
-namespace sophwork\app\controller;
+namespace Sophwork\app\controller;
 
-use sophwork\core\Sophwork;
-use sophwork\app\app\SophworkApp;
+use Sophwork\core\Sophwork;
+use Sophwork\app\app\SophworkApp;
 
-class AppController extends SophworkApp{
+class AppController extends SophworkApp
+{
 	protected $page;
 	protected $article;
 	protected $else;

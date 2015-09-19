@@ -1,17 +1,17 @@
 <?php
 /**
- *	This file is a part of the sophwork project
- *	@Tested version : Sophwork.0.2.9
+ *	This file is a part of the Sophwork project
+ *	@version : Sophwork.0.3.0
  *	@author : Syu93
  *	--
  *	Sophpkwork module : ORM Data mapper
  *	Data mapper entities class
  */
 
-namespace sophwork\modules\kdm;
+namespace Sophwork\modules\kdm;
 
-use sophwork\core\Sophwork;
-use sophwork\modules\kdm\SophworkDM;
+use Sophwork\core\Sophwork;
+use Sophwork\modules\kdm\SophworkDM;
 
 class SophworkDMEntities extends SophworkDM{
 	public $link;

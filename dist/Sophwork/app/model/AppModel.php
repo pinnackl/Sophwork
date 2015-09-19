@@ -1,32 +1,27 @@
 <?php
 /**
- *	This file is a part of the sophwork project
- *	@Tested version : Sophwork.0.2.9
+ *	This file is a part of the Sophwork project
+ *	@version : Sophwork.0.3.0
  *	@author : Syu93
  *	--
  *	Main model class
  */
 
-namespace sophwork\app\model;
+namespace Sophwork\app\model;
 
-use sophwork\app\app\SophworkApp;
+use Sophwork\app\app\SophworkApp;
 
-class AppModel extends SophworkApp{
+class AppModel extends SophworkApp
+{
 
     public $config;
 	protected $data;
     protected $link;
 
 	public function __construct($config = null){
-        if(!is_null($config) && $config != false)
+        if (!is_null($config) && $config != false)
             $this->config = $config;
-        else
-            $this->config = [
-                'db_host' => null,
-                'db_name' => null,
-                'db_login' => null,
-                'db_password' => null,
-            ];
+
         $this->link = $this->connectDatabase();
 	}
 
@@ -39,6 +34,8 @@ class AppModel extends SophworkApp{
 	}
 
 	public function connectDatabase(){
+        if(is_null($this->config))
+        	return null;
         extract($this->config);
 		try{
 			$link = new \PDO('mysql:host='.$db_host.';dbname='.$db_name,$db_login,$db_password,

@@ -9,8 +9,6 @@
 
 /**
  * DEPRECATED
- * @param  [type] $c [description]
- * @return [type]    [description]
  */
 function __autoload($c){
 // Autoloader

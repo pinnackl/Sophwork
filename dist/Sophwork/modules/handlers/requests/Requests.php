@@ -1,8 +1,8 @@
 <?php
 
-namespace sophwork\modules\handlers\requests;
+namespace Sophwork\modules\handlers\requests;
 
-use sophwork\core\Sophwork;
+use Sophwork\core\Sophwork;
 
 class Requests{
 

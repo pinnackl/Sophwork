@@ -1,6 +1,6 @@
 <?php
 
-namespace sophwork\modules\htmlElements;
+namespace Sophwork\modules\htmlElements;
 
 class htmlElement{
 	/* vars */

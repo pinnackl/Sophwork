@@ -1,17 +1,18 @@
 <?php
 /**
- *	This file is a part of the sophwork project
- *	@Tested version : Sophwork.0.2.9
+ *	This file is a part of the Sophwork project
+ *	@version : Sophwork.0.3.0
  *	@author : Syu93
  *	--
  *	Main view class
  */
 
-namespace sophwork\app\view;
+namespace Sophwork\app\view;
 
-use sophwork\app\app\SophworkApp;
+use Sophwork\app\app\SophworkApp;
 
-class AppView extends SophworkApp{
+class AppView extends SophworkApp
+{
 	public $theme;
 	public $modifiers = [
 		'S' => 'htmlspecialchars',

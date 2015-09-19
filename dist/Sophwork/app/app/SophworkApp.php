@@ -1,24 +1,22 @@
 <?php
 /**
- *	This file is a part of the sophwork project
- *	@Tested version : Sophwork.0.2.9
+ *	This file is a part of the Sophwork project
+ *	@version : Sophwork.0.3.0
  *	@author : Syu93
  *	--
  *	Main application class
  */
 
-namespace sophwork\app\app;
+namespace Sophwork\app\app;
 
-use sophwork\core\Sophwork;
-use sophwork\app\view\AppView;
-use sophwork\app\model\AppModel;
-use sophwork\app\controller\AppController;
+use Sophwork\core\Sophwork;
+use Sophwork\app\view\AppView;
+use Sophwork\app\model\AppModel;
+use Sophwork\app\controller\AppController;
 
-use sophwork\modules\kdm\SophworkDM;
-use sophwork\modules\kdm\SophworkDMEntities;
-
-class SophworkApp extends Sophwork{
-	// public $appName;
+class SophworkApp extends Sophwork
+{
+	public $appName;
 	public $config;
 	public $appView;
 	public $appModel;
@@ -26,7 +24,7 @@ class SophworkApp extends Sophwork{
 
 	/**
 	 *	@param none
-	 *	instanciate all sophwork classes :
+	 *	instanciate all Sophwork classes :
 	 *		AppView
 	 *		AppController
 	 *		AppModel
@@ -40,11 +38,10 @@ class SophworkApp extends Sophwork{
 	 */
 	public function __construct(){
 		parent::__construct();
-		$this->config = Sophwork::getConfig();
-		$this->appView 			 = new AppView();
-		// $this->appModel 		 = new AppModel($this->config);
-		if(Sophwork::getConfig())
-			$this->KDM = new SophworkDM(Sophwork::getConfig());
+		$this->config 				= Sophwork::getConfig();
+		$this->appView 			 	= new AppView();
+		$this->appModel 		 	= new AppModel($this->config);
+
 		if(!($this instanceof AppController))
 			$this->appController 	= new AppController($this->appModel);
 	}
@@ -116,15 +113,7 @@ class SophworkApp extends Sophwork{
 			->renderView($this->viewName, $path);
 	}
 
-	/**
-	 * Use to render theme template of the specified page
-	 * @param  name (optional) : template name to render (using index as default. See AppView->renderThemeView)
-	 * @param  path (optional) : path to the temple (using template folder by default. See AppView->renderThemeView)
-	 */
-	public function callThemeView($name = null, $path = null){
-		if( !is_null($name) )
-			$this->viewName = $name;
-		$this->appView
-			->renderThemeView($this->viewName, $path);
+	public function run(){
+		
 	}
 }
