@@ -9,9 +9,9 @@
 
 namespace Sophwork\app\view;
 
-use Sophwork\app\app\SophworkApp;
+use Sophwork\core\Sophwork;
 
-class AppView extends SophworkApp
+class AppView
 {
 	public $theme;
 	public $modifiers = [

@@ -9,32 +9,34 @@
 
 namespace Sophwork\app\model;
 
-use Sophwork\app\app\SophworkApp;
+use Sophwork\core\Sophwork;
 
-class AppModel extends SophworkApp
+class AppModel
 {
 
     public $config;
 	protected $data;
     protected $link;
 
-	public function __construct($config = null){
-        if (!is_null($config) && $config != false)
-            $this->config = $config;
+	public function __construct($config = null) {
+		if (is_null($config))
+			$this->config 				= Sophwork::getConfig();
+		else
+			$this->config 				= $config;
 
         $this->link = $this->connectDatabase();
 	}
 
-	public function __get($param){
+	public function __get($param) {
 		return $this->$param;
 	}
 
-	public function __set($param, $value){
+	public function __set($param, $value) {
         $this->$param = $value;
 	}
 
 	public function connectDatabase(){
-        if(is_null($this->config))
+        if(is_null($this->config) || (!isset($db_host) || !isset($db_name) || !isset($db_login) ||!isset($db_password)))
         	return null;
         extract($this->config);
 		try{
@@ -44,8 +46,7 @@ class AppModel extends SophworkApp
 				\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
                 \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
 			));
-		}
-		catch(Exception $e){
+		} catch(Exception $e) {
 			die("Erreur : ".$e->getMessage());
 		}
 		return $link;

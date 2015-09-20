@@ -10,32 +10,22 @@
 namespace Sophwork\app\controller;
 
 use Sophwork\core\Sophwork;
-use Sophwork\app\app\SophworkApp;
 
-class AppController extends SophworkApp
+class AppController
 {
-	protected $page;
-	protected $article;
-	protected $else;
-
 	public $appModel;
 
-	public function __construct($appModel = null){
-		parent::__construct();
+	public function __construct($appModel = null) {
 		$this->appModel = $appModel;
-
-		$this->page 	= Sophwork::getParam('p','index');
-		$this->article 	= Sophwork::getParam('a',false);
-		$this->else 	= Sophwork::getParam('e',false);		
 	}
 
-	public function __get($param){
+	public function __get($param) {
 		if(isset($this->$param))
 			return $this->$param;
 		return false;
 	}
 
-	public function __set($param, $value){
+	public function __set($param, $value) {
 		$this->$param = $value;
 	}
 }

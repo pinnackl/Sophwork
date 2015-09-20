@@ -13,6 +13,7 @@ use Sophwork\core\Sophwork;
 use Sophwork\app\view\AppView;
 use Sophwork\app\model\AppModel;
 use Sophwork\app\controller\AppController;
+use Sophwork\modules\handlers\dispatchers\AppDispatcher;
 
 class SophworkApp extends Sophwork
 {
@@ -21,6 +22,10 @@ class SophworkApp extends Sophwork
 	public $appView;
 	public $appModel;
 	public $appController;
+
+	protected $get;
+	protected $post;
+	protected $request;
 
 	/**
 	 *	@param none
@@ -36,22 +41,49 @@ class SophworkApp extends Sophwork
 	 * 	Beacause all others classes and controllers inherite from this class
 	 * 	appController is use as a singleton
 	 */
-	public function __construct(){
+	public function __construct($config = null) {
 		parent::__construct();
-		$this->config 				= Sophwork::getConfig();
+		if (is_null($config))
+			$this->config 			= Sophwork::getConfig();
+		else
+			$this->config 			= $config;
+
 		$this->appView 			 	= new AppView();
 		$this->appModel 		 	= new AppModel($this->config);
 
 		if(!($this instanceof AppController))
 			$this->appController 	= new AppController($this->appModel);
+		
+		if(!($this instanceof AppDispatcher))
+			$this->appDispatcher 	= new AppDispatcher($this);
+
+		$this->route 					= [];
 	}
 	
 	public function __set($param, $value) {
 		$this->$param = $value;
 	}
 
-	public function __get($param){
+	public function __get($param) {
 		return $this->$param;
+	}
+
+	public function get($route, $toController) {
+		$this->route['GET'][] = [
+			'route' => $route,
+			'toController' => $toController
+		];
+	}
+
+	public function post($route, $toController) {
+		$this->route['POST'][] = [
+			'route' => $route,
+			'toController' => $toController
+		];
+	}
+
+	public function request($route, $toController) {
+
 	}
 
 	/**
@@ -114,6 +146,10 @@ class SophworkApp extends Sophwork
 	}
 
 	public function run(){
-		
+		try {
+			$matche = $this->appDispatcher->matche();
+		} catch (\Exception $e) {
+			echo $e->getMessage(), "\n";
+		}
 	}
 }
