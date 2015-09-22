@@ -48,7 +48,7 @@ class SophworkApp extends Sophwork
 		else
 			$this->config 			= $config;
 
-		$this->appView 			 	= new AppView($this->config['template']);
+		$this->appView 			 	= new AppView($this->config);
 		$this->appModel 		 	= new AppModel($this->config);
 
 		if(!($this instanceof AppController))

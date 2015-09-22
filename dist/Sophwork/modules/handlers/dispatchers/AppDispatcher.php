@@ -28,7 +28,7 @@ class AppDispatcher
 			$controller = $this->dispatch($value['route'], $value['toController']);
 			// FIXME : Find a better way
 			if(is_callable($controller))
-				return @call_user_func_array($controller, [$this->app]);
+				return call_user_func_array($controller, [$this->app]);
 		}
 		throw new \Exception("<h1>Error ! No route found </h1>");
 	}

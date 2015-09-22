@@ -23,9 +23,9 @@ class AppView
 	];
 	public $viewData;
 
-	public function __construct($templateSrc) {
+	public function __construct($config) {
 		$this->viewData 	= [];
-		$this->templateSrc 	= $templateSrc;
+		$this->templateSrc 	= isset($config['template']) ? $config['template'] : null;
 	}
 
 	public function __set($param, $value) {
