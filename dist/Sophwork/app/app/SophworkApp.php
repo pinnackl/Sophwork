@@ -48,7 +48,7 @@ class SophworkApp extends Sophwork
 		else
 			$this->config 			= $config;
 
-		$this->appView 			 	= new AppView();
+		$this->appView 			 	= new AppView($this->config['template']);
 		$this->appModel 		 	= new AppModel($this->config);
 
 		if(!($this instanceof AppController))
@@ -68,6 +68,11 @@ class SophworkApp extends Sophwork
 		return $this->$param;
 	}
 
+	/**
+	 * GET route method
+	 * @param  [type] $route        [description]
+	 * @param  [type] $toController [description]
+	 */
 	public function get($route, $toController) {
 		$this->route['GET'][] = [
 			'route' => $route,
@@ -75,6 +80,11 @@ class SophworkApp extends Sophwork
 		];
 	}
 
+	/**
+	 * POST route method
+	 * @param  [type] $route        [description]
+	 * @param  [type] $toController [description]
+	 */
 	public function post($route, $toController) {
 		$this->route['POST'][] = [
 			'route' => $route,
@@ -87,67 +97,17 @@ class SophworkApp extends Sophwork
 	}
 
 	/**
-	 * As we access to the AppvView class using this class
-	 * the setViewData is usefull to fill the view class with data to display
-	 * @param itemName : is the name reference for retrieving the data
-	 * @param values : is the value to associate to the item name | it can be an associative array in which case the third param is used
-	 * @param arrayKey (optonal) : is the associative key to get data from values array
+	 * Run the Sophwork app
+	 *
+	 * FIXME : Find a other way if return response
 	 */
-	public function setViewData($itemName, $values, $arrayKey = null){
-		if(gettype($values) == 'string'){
-			$this->appView
-				->viewData->$itemName = $values;
-		}
-		
-		$list = new \StdClass();
-		if(gettype($values) == 'array' && !is_null($arrayKey)){
-			if(isset($this->appView->viewData->$itemName)){
-				$list = $this->appView->viewData->$itemName;
-			}
-			if(!is_null($values[$arrayKey])){
-				foreach ($values[$arrayKey] as $key => $value) {
-					$itemObj = new \StdClass();
-					$subItemName = $itemName.$key;
-					if(isset($this->appView->viewData->$itemName->$subItemName)){
-						$itemObj = $this->appView->viewData->$itemName->$subItemName;
-					}
-					$itemObj->$arrayKey = $value;
-					// add
-					$list->$subItemName = $itemObj;
-				}
-				// add
-				$this->appView->viewData->$itemName = $list;
-			}
-			else{
-				$this->appView->viewData->$itemName = $list;
-			}
-		}
-	}
-
-	/**
-	 * When having to use unformated data and wanted to retrieved it from template
-	 * @param itemName : is the name reference for retrieving the data
-	 * @param values : is the value to associate to the item name
-	 */
-	public function setRawData($itemName, $value){
-		$this->appView->viewData->$itemName = $value;
-	}
-
-	/**
-	 * Use to render template of the specified page
-	 * @param  name (optional) : template name to render (using index as default. See AppView->renderView)
-	 * @param  path (optional) : path to the temple (using template folder by default. See AppView->renderView)
-	 */
-	public function callView($name = null, $path = null){
-		if( !is_null($name) )
-			$this->viewName = $name;
-		$this->appView
-			->renderView($this->viewName, $path);
-	}
-
 	public function run(){
 		try {
 			$matche = $this->appDispatcher->matche();
+			if (!is_object($matche))
+				echo $matche;
+			else
+				echo $matche->getResponse();
 		} catch (\Exception $e) {
 			echo $e->getMessage(), "\n";
 		}

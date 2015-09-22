@@ -13,7 +13,7 @@ use Sophwork\core\Sophwork;
 
 class AppView
 {
-	public $theme;
+	public $templateSrc;
 	public $modifiers = [
 		'S' => 'htmlspecialchars',
 		'U' => 'strtoupper',
@@ -23,8 +23,9 @@ class AppView
 	];
 	public $viewData;
 
-	public function __construct() {
-		$this->viewData = new \StdClass();
+	public function __construct($templateSrc) {
+		$this->viewData 	= [];
+		$this->templateSrc 	= $templateSrc;
 	}
 
 	public function __set($param, $value) {
@@ -35,72 +36,28 @@ class AppView
 		return $this->$param;
 	}
 
-	public function isActive($page, $level = 'p'){
-		if(isset($_GET[$level]) && $page == $_GET[$level])
-			echo' active';
-		elseif(!isset($_GET[$level]) && $page == 'index')
-			echo' active';
+	public function renderView($template, Array $data = []) {
+		extract($data);
+		$filename = $this->templateSrc . '/' .$template.'.tpl';
+		ob_start();
+		if(file_exists($filename))
+			include_once($this->templateSrc . '/' .$template.'.tpl');
+		else
+			throw new \Exception("<h1>Error template file not found !</h1>");
+		$output = ob_get_contents();
+		ob_clean();
+		return $output;
 	}
 
-	public function renderView($template, $path = null){
-		if(is_null($template))
-			$template = 'index';
-		if(!is_null($path)){
-			include_once(dirname(dirname(__FILE__)) . '/..' .'/../' . $path . 'template/'.$template.'.tpl');
-			return;
-		}
-		include_once(dirname(dirname(__FILE__)) . '/..' .'/../template/'.$template.'.tpl');
-	}
-
-	public function renderThemeView($template, $path = null){
-		if(is_null($template))
-			$template = 'index';
-		if(!is_null($path)){
-			include_once(dirname(dirname(__FILE__)) . '/..' .'/../' . $path . 'template/themes/'.$this->theme.'/'.$template.'.tpl');
-			return;
-		}
-		include_once(dirname(dirname(__FILE__)) . '/..' .'/../template/themes/'.$this->theme.'/'.$template.'.tpl');
-	}
-
-	/** 
-	 *	@param $value : string , object , array 
-	 *	@param $item  : null, string , array
-	 *	@param $modifier : ref public $modifiers[]
-	 */
-	public function show($value, $item = null, $modifier = 'S'){
-		$method = $this->modifiers[$modifier];
-		if(!is_null($item)){
-			if(getType($value->$item) == "string"){
-				if(isset($value->$item))
-				echo $method($value->$item);
-				return $method($value->$item);
-			}else{
-				return $value->$item;
-			}	
-		}
-		if(isset($this->viewData->$value))
-			echo $method($this->viewData->$value);
-		return $method($this->viewData->$value);
-	}
-
-	public function e($value, $modifier = 'S'){
-		$method = $this->modifiers[$modifier];
-		echo $method($value);
-	}
-
-	public function get($value, $item = null, $modifier = 'S'){
-		$method = $this->modifiers[$modifier];
-		if(!is_null($item)){
-			if(getType($value->$item) == "string"){
-				if(isset($value->$item))
-
-				return $method($value->$item);
-			}else{
-				return $value->$item;
-			}	
-		}
-		if(isset($this->viewData->$value))
-
-		return $method($this->viewData->$value);
+	public function getLayout($template, Array $data = []) {
+		extract($data);
+		$filename = $this->templateSrc . '/' .$template.'.tpl';
+		ob_start();
+		if(file_exists($filename))
+			include_once($this->templateSrc . '/' .$template.'.tpl');
+		else
+			throw new \Exception("<h1>Error template layout file not found !</h1>");
+		ob_flush();
+		ob_clean();
 	}
 }
