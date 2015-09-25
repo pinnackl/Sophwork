@@ -26,10 +26,12 @@ class AppDispatcher
 
 		foreach ($this->app->route[$_SERVER['REQUEST_METHOD']] as $key => $value) {
 			$controllersAndArgs = $this->dispatch($value['route'], $value['toController']);
-			if (is_callable($controllersAndArgs['controller'])){
+			if (isset($controllersAndArgs['controller']) && is_callable($controllersAndArgs['controller'])){
 				$controllers = preg_split("/::/", $controllersAndArgs['controller']);
 				$controler = new $controllers[0];
 				return call_user_func_array([$controler, $controllers[1]], $controllersAndArgs['args']);
+			} else if (isset($controllersAndArgs['controllerClosure']) && is_callable($controllersAndArgs['controllerClosure'])){
+				return call_user_func_array($controllersAndArgs['controllerClosure'], $controllersAndArgs['args']);
 			}
 		}
 		throw new \Exception("<h1>Error ! No route found </h1>");
@@ -53,7 +55,10 @@ class AppDispatcher
 		if (empty($matches[0])) {
 			if (is_callable($toController)){
 				if ($route === $routes) {
-					return $toController;
+					return [
+						'controllerClosure' => $toController,
+						'args' => [$this->app],
+					];
 				} else {
 					return null;
 				}
@@ -76,8 +81,18 @@ class AppDispatcher
 			$routes = preg_replace("/{([^{}]+)}/", "([^\/]+)", $routes);
 
 			if (is_callable($toController)){
-				if (preg_match("#$routes#", $route, $matchRoute)) {
+				if (preg_match_all("#$routes#", $route, $matchRoute)) {
+					array_shift($matchRoute);
+					
+					$args = [$this->app];
+					foreach ($matchRoute as $key => $value) {
+						$args[] = $value[0];
+					}
 
+					return [
+						'controllerClosure' => $toController,
+						'args' => $args,
+					];
 				} else {
 					return null;
 				}
