@@ -25,30 +25,81 @@ class AppDispatcher
 			return null;
 
 		foreach ($this->app->route[$_SERVER['REQUEST_METHOD']] as $key => $value) {
-			$controller = $this->dispatch($value['route'], $value['toController']);
-			// FIXME : Find a better way
-			if(is_callable($controller))
-				return call_user_func_array($controller, [$this->app]);
+			$controllersAndArgs = $this->dispatch($value['route'], $value['toController']);
+			if (is_callable($controllersAndArgs['controller'])){
+				$controllers = preg_split("/::/", $controllersAndArgs['controller']);
+				$controler = new $controllers[0];
+				return call_user_func_array([$controler, $controllers[1]], $controllersAndArgs['args']);
+			}
 		}
 		throw new \Exception("<h1>Error ! No route found </h1>");
 	}
 
+	/**
+	 * Dispatch the route to the right controller
+	 * @param  String $routes       String to match in URI
+	 * @param  String $toController Controller to use when mattch
+	 * @return String/Object        Class controller to use when match case
+	 */
 	protected function dispatch ($routes, $toController) {
+		/**
+		 * $routes - Routes from the list of declared routes
+		 * $route  - Actual route from the URI
+		 */
 		$route = $this->resolve();
-		if (is_callable($toController)){
-			if ($route === $routes) {
-				return $toController;
-			} else {
-				return null;
-			}
-		} else if (is_array($toController)) {
-			if ($route === $routes) {
-				$controller = array_keys($toController);
-				$action 	= array_values($toController);
+		
+		preg_match_all("/{([^{}]+)}/", $routes, $matches);
 
-				return sprintf("%s::%s", $controller[0],$action[0]);
-			} else {
-				return null;
+		if (empty($matches[0])) {
+			if (is_callable($toController)){
+				if ($route === $routes) {
+					return $toController;
+				} else {
+					return null;
+				}
+			} else if (is_array($toController)) {
+				if ($route === $routes) {
+					$controller = array_keys($toController);
+					$action 	= array_values($toController);
+
+					return [
+						'controller' => sprintf("%s::%s", $controller[0],$action[0]),
+						'args' => [$this->app],
+					];
+				} else {
+					return null;
+				}
+			}
+
+		} else {
+			$routes = str_replace("/", "\/", $routes);
+			$routes = preg_replace("/{([^{}]+)}/", "([^\/]+)", $routes);
+
+			if (is_callable($toController)){
+				if (preg_match("#$routes#", $route, $matchRoute)) {
+
+				} else {
+					return null;
+				}
+			} else if (is_array($toController)) {
+				if (preg_match_all("#^$routes$#", $route, $matchRoute)) {
+					array_shift($matchRoute);
+
+					$controller = array_keys($toController);
+					$action 	= array_values($toController);
+
+					$args = [$this->app];
+					foreach ($matchRoute as $key => $value) {
+						$args[] = $value[0];
+					}
+
+					return [
+						'controller' => sprintf("%s::%s", $controller[0],$action[0]),
+						'args' => $args,
+					];
+				} else {
+					return null;
+				}
 			}
 		}
 	}
