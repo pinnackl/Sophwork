@@ -23,9 +23,7 @@ class SophworkApp extends Sophwork
 	public $appModel;
 	public $appController;
 
-	protected $get;
-	protected $post;
-	protected $request;
+	protected $route;
 
 	/**
 	 *	@param none

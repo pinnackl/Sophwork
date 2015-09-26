@@ -34,7 +34,7 @@ class AppDispatcher
 				return call_user_func_array($controllersAndArgs['controllerClosure'], $controllersAndArgs['args']);
 			}
 		}
-		throw new \Exception("<h1>Error ! No route found </h1>");
+		throw new \Exception("<h3>Error ! No route found  for : <h3>\"<b>" . $this->resolve() . "</b>\"");
 	}
 
 	/**
@@ -83,7 +83,7 @@ class AppDispatcher
 			if (is_callable($toController)){
 				if (preg_match_all("#$routes#", $route, $matchRoute)) {
 					array_shift($matchRoute);
-					
+
 					$args = [$this->app];
 					foreach ($matchRoute as $key => $value) {
 						$args[] = $value[0];
@@ -120,7 +120,7 @@ class AppDispatcher
 	}
 
 	protected function resolve () {
-		$baseURL = $this->app->config['baseUrl'];
+		$baseURL = isset($this->app->config['baseUrl']) ? $this->app->config['baseUrl'] : "";
 
 		preg_match("#".$baseURL."(.*)#", $_SERVER['REQUEST_URI'], $matches);
 		return isset($matches[1])? $matches[1] : false;
