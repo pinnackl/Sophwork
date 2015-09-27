@@ -25,6 +25,8 @@ class SophworkApp extends Sophwork
 
 	protected $route;
 
+	protected $debug;
+
 	/**
 	 *	@param none
 	 *	instanciate all Sophwork classes :
@@ -55,7 +57,9 @@ class SophworkApp extends Sophwork
 		if(!($this instanceof AppDispatcher))
 			$this->appDispatcher 	= new AppDispatcher($this);
 
-		$this->route 					= [];
+		$this->route 				= [];
+
+		$this->debug 				= false;
 	}
 	
 	public function __set($param, $value) {
@@ -107,7 +111,11 @@ class SophworkApp extends Sophwork
 			else
 				echo $matche->getResponse();
 		} catch (\Exception $e) {
-			echo $e->getMessage(), "\n";
+			echo $e->getMessage(), "<br>";
+			if ($this->debug){
+				echo '<b>DEBUG MODE </b>: TRUE';
+				die;
+			}
 		}
 	}
 }

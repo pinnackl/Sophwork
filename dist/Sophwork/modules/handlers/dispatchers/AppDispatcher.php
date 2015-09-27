@@ -24,17 +24,21 @@ class AppDispatcher
 		if(!isset($_SERVER['REQUEST_METHOD']))
 			return null;
 
-		foreach ($this->app->route[$_SERVER['REQUEST_METHOD']] as $key => $value) {
-			$controllersAndArgs = $this->dispatch($value['route'], $value['toController']);
-			if (isset($controllersAndArgs['controller']) && is_callable($controllersAndArgs['controller'])){
-				$controllers = preg_split("/::/", $controllersAndArgs['controller']);
-				$controler = new $controllers[0];
-				return call_user_func_array([$controler, $controllers[1]], $controllersAndArgs['args']);
-			} else if (isset($controllersAndArgs['controllerClosure']) && is_callable($controllersAndArgs['controllerClosure'])){
-				return call_user_func_array($controllersAndArgs['controllerClosure'], $controllersAndArgs['args']);
+		if (isset($this->app->route[$_SERVER['REQUEST_METHOD']])){
+			foreach ($this->app->route[$_SERVER['REQUEST_METHOD']] as $key => $value) {
+				$controllersAndArgs = $this->dispatch($value['route'], $value['toController']);
+				if (isset($controllersAndArgs['controller']) && is_callable($controllersAndArgs['controller'])){
+					$controllers = preg_split("/::/", $controllersAndArgs['controller']);
+					$controler = new $controllers[0];
+					return call_user_func_array([$controler, $controllers[1]], $controllersAndArgs['args']);
+				} else if (isset($controllersAndArgs['controllerClosure']) && is_callable($controllersAndArgs['controllerClosure'])){
+					return call_user_func_array($controllersAndArgs['controllerClosure'], $controllersAndArgs['args']);
+				}
 			}
+			throw new \Exception("<h3>Error ! No route found  for : </h3>\"<b>" . $this->resolve() . "</b>\"");
+		} else {
+			throw new \Exception("<h3>Fatal error !</h3>\"<b>No routes declared for this application !</b>\"");
 		}
-		throw new \Exception("<h3>Error ! No route found  for : <h3>\"<b>" . $this->resolve() . "</b>\"");
 	}
 
 	/**
@@ -50,7 +54,7 @@ class AppDispatcher
 		 */
 		$route = $this->resolve();
 		
-		preg_match_all("/{([^{}]+)}/", $routes, $matches);
+		preg_match_all("/{([^{}?&]+)}/", $routes, $matches);
 
 		if (empty($matches[0])) {
 			if (is_callable($toController)){
@@ -122,7 +126,7 @@ class AppDispatcher
 	protected function resolve () {
 		$baseURL = isset($this->app->config['baseUrl']) ? $this->app->config['baseUrl'] : "";
 
-		preg_match("#".$baseURL."(.*)#", $_SERVER['REQUEST_URI'], $matches);
+		preg_match("#".$baseURL."([^?&]*)#", $_SERVER['REQUEST_URI'], $matches);
 		return isset($matches[1])? $matches[1] : false;
 	}
 }
