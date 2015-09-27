@@ -16,8 +16,8 @@ class AppView
 	public $templateSrc;
 	public $modifiers = [
 		'S' => 'htmlspecialchars',
-		'U' => 'strtoupper',
-		'L' => 'strtolower',
+		'U' => 'mb_strtoupper',
+		'L' => 'mb_strtolower',
 		'FU' => 'ucfirst',
 		'FL' => 'lcfirst',
 	];
@@ -34,6 +34,10 @@ class AppView
 	
 	public function __get($param) {
 		return $this->$param;
+	}
+
+	public function e($value, $modifier = 'S') {
+		return $this->modifiers[$modifier]($value);
 	}
 
 	public function renderView($template, Array $data = []) {
