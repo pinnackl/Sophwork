@@ -16,6 +16,7 @@ require_once(__DIR__ . '/../dist/autoloader.php');
 
 use Sophwork\core\Sophwork;
 use Sophwork\app\app\SophworkApp;
+use Sophwork\modules\handlers\errors\ErrorHandler;
 
 $autoloader->config = '/var/www/Sophwork/src';
 
@@ -45,4 +46,7 @@ $app->get('/game/{category}/{game}', ['MyApp\Controller\Home' => 'gameCategory']
 // 	echo'</pre>';
 // });
 
-$app->run();
+new ErrorHandler();
+plop;
+
+// $app->run();
