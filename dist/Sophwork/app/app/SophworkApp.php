@@ -23,7 +23,7 @@ class SophworkApp extends Sophwork
 	public $appModel;
 	public $appController;
 
-	protected $route;
+	protected $routes;
 
 	protected $debug;
 
@@ -57,7 +57,7 @@ class SophworkApp extends Sophwork
 		if(!($this instanceof AppDispatcher))
 			$this->appDispatcher 	= new AppDispatcher($this);
 
-		$this->route 				= [];
+		$this->routes 				= [];
 
 		$this->debug 				= false;
 	}
@@ -75,11 +75,17 @@ class SophworkApp extends Sophwork
 	 * @param  [type] $route        [description]
 	 * @param  [type] $toController [description]
 	 */
-	public function get($route, $toController) {
-		$this->route['GET'][] = [
+	public function get($route, $toController, $alias = null) {
+		$route = [
 			'route' => $route,
-			'toController' => $toController
+			'toController' => $toController,
+			'alias' => $alias,
+			'isDynamic' => preg_match("/{([^{}?&]+)}/", $route),
 		];
+		if (!is_null($alias))
+			$this->routes['GET'][$alias] = $route;
+		else
+			$this->routes['GET'][] = $route;
 	}
 
 	/**
@@ -87,11 +93,14 @@ class SophworkApp extends Sophwork
 	 * @param  [type] $route        [description]
 	 * @param  [type] $toController [description]
 	 */
-	public function post($route, $toController) {
-		$this->route['POST'][] = [
+	public function post($route, $toController, $alias = null) {
+		$route = [
 			'route' => $route,
-			'toController' => $toController
+			'toController' => $toController,
+			'alias' => $alias,
+			'isDynamic' => preg_match("/{([^{}?&]+)}/", $route),
 		];
+		$this->routes['POST'][] = $route;
 	}
 
 	public function request($route, $toController) {

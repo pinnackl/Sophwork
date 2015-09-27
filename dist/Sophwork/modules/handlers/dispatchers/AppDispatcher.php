@@ -24,8 +24,8 @@ class AppDispatcher
 		if(!isset($_SERVER['REQUEST_METHOD']))
 			return null;
 
-		if (isset($this->app->route[$_SERVER['REQUEST_METHOD']])){
-			foreach ($this->app->route[$_SERVER['REQUEST_METHOD']] as $key => $value) {
+		if (isset($this->app->routes[$_SERVER['REQUEST_METHOD']])){
+			foreach ($this->app->routes[$_SERVER['REQUEST_METHOD']] as $key => $value) {
 				$controllersAndArgs = $this->dispatch($value['route'], $value['toController']);
 				if (isset($controllersAndArgs['controller']) && is_callable($controllersAndArgs['controller'])){
 					$controllers = preg_split("/::/", $controllersAndArgs['controller']);
@@ -82,6 +82,7 @@ class AppDispatcher
 
 		} else {
 			$routes = str_replace("/", "\/", $routes);
+			// $dynamicParam = $routes;
 			$routes = preg_replace("/{([^{}]+)}/", "([^\/]+)", $routes);
 
 			if (is_callable($toController)){
@@ -103,6 +104,9 @@ class AppDispatcher
 			} else if (is_array($toController)) {
 				if (preg_match_all("#^$routes$#", $route, $matchRoute)) {
 					array_shift($matchRoute);
+
+					// preg_match_all("#{([^{}]+)}#", $dynamicParam, $paramMatch);
+					// array_shift($paramMatch);
 
 					$controller = array_keys($toController);
 					$action 	= array_values($toController);
