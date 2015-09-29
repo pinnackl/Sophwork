@@ -10,13 +10,11 @@
  *	
  *	NOTE : Uncomment the exemples bellow to see it works
  */
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 require_once(__DIR__ . '/../dist/autoloader.php');
 
 use Sophwork\core\Sophwork;
 use Sophwork\app\app\SophworkApp;
-use Sophwork\modules\handlers\errors\ErrorHandler;
+use Sophwork\modules\handlers\errors\errorHandler\ErrorHandler;
 
 $autoloader->config = '/var/www/Sophwork/src';
 
@@ -32,6 +30,9 @@ $app = new SophworkApp([
 	'template' => '/var/www/Sophwork/template',
 ]);
 
+$app->debug = true;
+$app->inject(new ErrorHandler());
+
 $app->get('/', ['MyApp\Controller\Home' => 'show'], 'home');
 $app->get('/game/{game}', ['MyApp\Controller\Home' => 'gameShow'], 'gameShow');
 $app->get('/game/{game}/edit', ['MyApp\Controller\Home' => 'gameEdit'], 'gameEdit');
@@ -46,7 +47,12 @@ $app->get('/game/{category}/{game}', ['MyApp\Controller\Home' => 'gameCategory']
 // 	echo'</pre>';
 // });
 
-new ErrorHandler();
-plop;
 
-// $app->run();
+
+echo file_get_contents('ids');
+plop;
+foreach ("" as $key => $value) {
+	# code...
+}
+a;
+$app->run();

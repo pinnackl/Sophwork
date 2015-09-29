@@ -39,9 +39,10 @@ class Home
 	public function gameShow(SophworkApp $app, $game) {
 		$baseUrl = $app->config['baseUrl'];
 		$view = $app->appView;
+		$app->inject(new UrlGenerator());
 		// echo $generator = (new UrlGenerator($app->routes))->generate('gameShow', ['game'=>'zelda']);
 		// echo $generator = (new UrlGenerator($app->routes))->generate('gameCategory', ['category'=>'nintendo' ,'game'=>'zelda']);
-		$editUrl = (new UrlGenerator($app->routes))->generate('gameEdit', ['game'=>'zelda']);
+		$editUrl = $app->UrlGenerator->generate('gameEdit', ['game'=>'zelda']);
 		return $view->renderView('gameShow', [
 			'game' => $game,
 			'editUrl' => $baseUrl.$editUrl,
