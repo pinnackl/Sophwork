@@ -1,5 +1,14 @@
 <?php
-
+/**
+ *	This file is a part of the Sophwork project
+ *	@version : Sophwork.0.3.0
+ *	@author : Syu93
+ *	--
+ *	Main UrlGenerator class
+ *	
+ *	Service provider - Must containt (init) method
+ *	and must return its application name
+ */
 namespace Sophwork\modules\generators\urls;
 
 use Sophwork\app\app\SophworkApp;
@@ -10,13 +19,13 @@ class UrlGenerator
 	
 	private $routes;
 
-	public function __construct(Array $routes = null) {
-		$this->routes 		= [];
-		if (!is_null($routes))
-			$this->routes 	= $routes;
+	public function init(SophworkApp $app) {
+		$this->routes 		= $app->routes;
+		if (!is_null($this->routes))
+			$this->routes 	= $this->routes;
 
 		$this->generatedUrl = "";
-		return $this;
+		return 'UrlGenerator';
 	}
 
 	public function generate($route = "/", Array $parameters = [], $rewrited = true) {
