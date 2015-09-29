@@ -8,5 +8,6 @@
 		<input id="gameID" type="text" name="gameId" value="<?= $game ?>">
 		<button>Save</button>
 	</form>
+	<a href="<?= $cancel ?>">Cancel</a>
 </body>
 </html>

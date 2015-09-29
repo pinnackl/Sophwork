@@ -47,12 +47,4 @@ $app->get('/game/{category}/{game}', ['MyApp\Controller\Home' => 'gameCategory']
 // 	echo'</pre>';
 // });
 
-
-
-echo file_get_contents('ids');
-plop;
-foreach ("" as $key => $value) {
-	# code...
-}
-a;
 $app->run();
