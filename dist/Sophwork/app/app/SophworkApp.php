@@ -107,6 +107,11 @@ class SophworkApp extends Sophwork
 
 	}
 
+	public function inject($depenency) {
+		$depenencyName = $depenency->init($this);
+		$this->$depenencyName = $depenency;
+	}
+
 	/**
 	 * Run the Sophwork app
 	 *
@@ -119,7 +124,7 @@ class SophworkApp extends Sophwork
 				echo $matche;
 			else
 				echo $matche->getResponse();
-		} catch (\Exception $e) {
+		} catch (\Sophwork\modules\handlers\errors\exception\SophworkErrorException\ErrorHandler $e) {
 			echo $e->getMessage(), "<br>";
 			if ($this->debug){
 				echo '<b>DEBUG MODE </b>: TRUE';
