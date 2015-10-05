@@ -112,16 +112,16 @@ class SophworkApp extends Sophwork
 		$this->$depenencyName = $depenency;
 	}
 
-	/**
-	 * Run the Sophwork app
-	 *
-	 * FIXME : Find a other way if return response
-	 */
 	public function run(){
 		try {
 			$matche = $this->appDispatcher->matche();
-			if (!is_object($matche))
-				echo $matche;
+
+			if (!is_object($matche)) {
+				if (!is_null($matche))
+					echo $matche;
+				else
+					throw new \Exception("<h3>Error !</h3>\"<b>Controller must return something !</b>\"");
+			}
 			else
 				echo $matche->getResponse();
 		} catch (\Sophwork\modules\handlers\errors\exception\SophworkErrorException\ErrorHandler $e) {

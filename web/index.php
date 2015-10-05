@@ -39,10 +39,7 @@ $app->get('/', ['MyApp\Controller\Home' => 'show'], 'home');
 $app->get('/game/{game}', ['MyApp\Controller\Home' => 'gameShow'], 'gameShow');
 $app->get('/game/{game}/edit', ['MyApp\Controller\Home' => 'gameEdit'], 'gameEdit');
 $app->get('/game/{category}/{game}', ['MyApp\Controller\Home' => 'gameCategory'], 'gameCategory');
-// $app->get('/post', ['MyApp\Controller\Home' => 'blog']);
-// $app->get('/about', ['MyApp\Controller\Home' => 'blog']);
-// $app->get('/contact', ['MyApp\Controller\Home' => 'contact']);
-// $app->post('/form', ['MyApp\Controller\Home' => 'form']);
+$app->post('/form', ['MyApp\Controller\Home' => 'form']);
 // $app->get('/blog/{id}', function($app, $id){
 // 	echo'<pre>';
 // 	var_dump($id);

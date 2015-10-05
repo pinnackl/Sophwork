@@ -54,13 +54,16 @@ class Home
 		$view = $app->appView;
 		$app->inject(new UrlGenerator());
 		$cancel = $app->UrlGenerator->generate('gameShow', ['game'=>$game]);
+		$formAction = $app->UrlGenerator->generate('/form');
 		return $view->renderView('gameEdit', [
 			'game' => $game,
 			'cancel' => $baseUrl.$cancel,
+			'formAction' => $baseUrl.$formAction,
 		]);
 	}
 
-	public function form(SophworkApp $app, Requests $requests) {		
-		// return new Responses("Your message :<br><b>" . $_POST['message'] . "</b>");
+	public function form(SophworkApp $app, Requests $requests) {
+
+		return new Responses("Your message :<br><b>" . $requests->get('gameId') . "</b>");
 	}
 }
