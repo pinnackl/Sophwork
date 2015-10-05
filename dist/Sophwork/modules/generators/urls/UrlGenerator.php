@@ -12,14 +12,15 @@
 namespace Sophwork\modules\generators\urls;
 
 use Sophwork\app\app\SophworkApp;
+use Sophwork\modules\ServiceProviders\ServiceProviderInterface\ServiceProviderInterface;
 
-class UrlGenerator
+class UrlGenerator implements ServiceProviderInterface
 {
 	protected $generatedUrl;
 	
 	private $routes;
 
-	public function init(SophworkApp $app) {
+	public function init (SophworkApp $app, Array $parameters = []) {
 		$this->routes 		= $app->routes;
 		if (!is_null($this->routes))
 			$this->routes 	= $this->routes;

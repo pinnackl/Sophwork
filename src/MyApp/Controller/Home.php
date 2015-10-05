@@ -17,7 +17,7 @@ class Home
 		return $view->renderView('home');
 	}
 
-	public function blog(SophworkApp $app, $id) {
+	public function blog(SophworkApp $app, Requests $requests, $id) {
 		return new Responses("Blog ID is : <b>" . $id . "</b>");
 	}
 
@@ -29,7 +29,7 @@ class Home
 		]);
 	}
 
-	public function gameCategory (SophworkApp $app, $category, $game){
+	public function gameCategory (SophworkApp $app, Requests $requests, $category, $game){
 		echo'<pre>';
 		var_dump('<b>category</b>');
 		var_dump($category);
@@ -38,7 +38,7 @@ class Home
 		echo'</pre>';
 	}
 
-	public function gameShow(SophworkApp $app, $game) {
+	public function gameShow(SophworkApp $app, Requests $requests, $game) {
 		$baseUrl = $app->config['baseUrl'];
 		$view = $app->appView;
 		$app->inject(new UrlGenerator());
@@ -49,7 +49,7 @@ class Home
 		]);
 	}
 
-	public function gameEdit(SophworkApp $app, $game) {
+	public function gameEdit(SophworkApp $app, Requests $requests, $game) {
 		$baseUrl = $app->config['baseUrl'];
 		$view = $app->appView;
 		$app->inject(new UrlGenerator());
@@ -60,7 +60,7 @@ class Home
 		]);
 	}
 
-	public function form(SophworkApp $app) {		
-		return new Responses("Your message :<br><b>" . $_POST['message'] . "</b>");
+	public function form(SophworkApp $app, Requests $requests) {		
+		// return new Responses("Your message :<br><b>" . $_POST['message'] . "</b>");
 	}
 }

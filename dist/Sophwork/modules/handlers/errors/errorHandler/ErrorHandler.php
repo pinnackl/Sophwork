@@ -13,7 +13,6 @@ namespace Sophwork\modules\handlers\errors\errorHandler;
 
 use Sophwork\app\app\SophworkApp;
 use Sophwork\modules\handlers\errors\exception\SophworkErrorException;
-
 use Sophwork\modules\ServiceProviders\ServiceProviderInterface\ServiceProviderInterface;
 
 class ErrorHandler implements ServiceProviderInterface
