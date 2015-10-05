@@ -14,11 +14,13 @@ namespace Sophwork\modules\handlers\errors\errorHandler;
 use Sophwork\app\app\SophworkApp;
 use Sophwork\modules\handlers\errors\exception\SophworkErrorException;
 
-class ErrorHandler
+use Sophwork\modules\ServiceProviders\ServiceProviderInterface\ServiceProviderInterface;
+
+class ErrorHandler implements ServiceProviderInterface
 {
 	protected $customMessage;
 
-	public function init(SophworkApp $app, $customMessage = null) {
+	public function init (SophworkApp $app, Array $parameters = []) {
 		if ($app->debug) {
 			error_reporting(E_ALL|E_STRICT);
 			ini_set('display_errors', $app->debug?1:0);
@@ -26,7 +28,7 @@ class ErrorHandler
 			set_error_handler([$this, "errorHandler"]);
 			set_exception_handler([$this, "exceptionHandler"]);
 
-			$this->customMessage = $customMessage;
+			// $this->customMessage = $customMessage;
 		}
 
 		return 'ErrorHandler';

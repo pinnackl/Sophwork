@@ -4,14 +4,16 @@ namespace MyApp\Controller;
 
 use Sophwork\app\app\SophworkApp;
 use Sophwork\app\view\AppView;
+use Sophwork\modules\handlers\requests\Requests;
 use Sophwork\modules\handlers\responses\Responses;
 use Sophwork\modules\generators\urls\UrlGenerator;
 
 class Home
 {
-	public function show(SophworkApp $app) {
-		$view = $app->appView;		
+	public function show(SophworkApp $app, Requests $requests) {
+		$view = $app->appView;
 		$generators = new UrlGenerator();
+		// $responses = new Responses('Error page not found', 404);
 		return $view->renderView('home');
 	}
 

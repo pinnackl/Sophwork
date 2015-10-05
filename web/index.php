@@ -16,7 +16,7 @@ use Sophwork\core\Sophwork;
 use Sophwork\app\app\SophworkApp;
 use Sophwork\modules\handlers\errors\errorHandler\ErrorHandler;
 
-$autoloader->config = '/var/www/Sophwork/src';
+$autoloader->config = __DIR__ . '/../src/';
 
 /*
  *	Create a new applicaion with the Sophwork class
@@ -27,7 +27,7 @@ $autoloader->config = '/var/www/Sophwork/src';
  */
 $app = new SophworkApp([
 	'baseUrl' => '/Sophwork/web',
-	'template' => '/var/www/Sophwork/template',
+	'template' => __DIR__ . '/../template/',
 ]);
 
 $app->debug = true;
