@@ -27,6 +27,11 @@ class SophworkApp extends Sophwork
 
 	protected $debug;
 
+	protected $errors;
+
+	protected $before;
+	protected $after;
+
 	/**
 	 *	@param none
 	 *	instanciate all Sophwork classes :
@@ -112,24 +117,119 @@ class SophworkApp extends Sophwork
 		$this->$depenencyName = $depenency;
 	}
 
-	/**
-	 * Run the Sophwork app
-	 *
-	 * FIXME : Find a other way if return response
-	 */
+	public function errors($callable = null) {
+		$this->errors = $callable;
+	}
+
+	public function before($callable = null) {
+		if (is_callable($callable))
+			$this->before = $callable;
+	}
+
+	public function after($callable = null) {
+		if (is_callable($callable))
+			$this->after = $callable;
+	}
+
+	public function abort($errorCode = 500, $message = null) {
+		if (class_exists("\Sophwork\\modules\\handlers\\responses\\Responses"))
+			return new \Sophwork\modules\handlers\responses\Responses($message, $errorCode);
+		else {
+			http_response_code($errorCode);		
+			return is_null($message) ? '' . $message : $message;
+		}
+	}
+
 	public function run(){
-		try {
-			$matche = $this->appDispatcher->matche();
-			if (!is_object($matche))
-				echo $matche;
-			else
-				echo $matche->getResponse();
-		} catch (\Sophwork\modules\handlers\errors\exception\SophworkErrorException\ErrorHandler $e) {
-			echo $e->getMessage(), "<br>";
-			if ($this->debug){
-				echo '<b>DEBUG MODE </b>: TRUE';
-				die;
+		// custom hook
+		if (!is_null($this->before))
+			call_user_func_array($this->before, [$this]);
+
+		// check if the Sophwork error exception handler is used for this application
+		if (isset($this->ErrorHandler)) {
+			// check if the custom error messages have been set
+			// use the default exception messages
+			if(!$this->errors) {
+				try {
+					// matche return the controller response object to set to the user
+					// if no match happen the dispatchers send an exception with the appropriate http status code
+					$matche = $this->appDispatcher->matche();
+					if (!is_object($matche)) {
+						if (!is_null($matche))
+							echo $matche;
+						else {
+							http_response_code(500);
+							throw new \Exception("<h3>Error !</h3>\"<b>Controller must return something !</b>\"");
+						}
+					} else
+						echo $matche->getResponse();
+				} catch (\Sophwork\modules\handlers\errors\exception\SophworkErrorException\ErrorHandler $e) {
+					echo $e->getMessage(), "<br>";
+					if ($this->debug){
+						echo '<b>DEBUG MODE </b>: TRUE';
+						exit;
+					}
+				}
+			} else {
+				// check if custom exception messages have been set into a callable
+				if (is_callable($this->errors)) {
+					try {
+						// matche return the controller response object to set to the user
+						// if no match happen the dispatchers send an exception with the appropriate http status code
+						$matche = $this->appDispatcher->matche();
+					} catch (\Exception $e) {
+						// custom exception messages handling 
+						ob_start();
+						$response = call_user_func_array($this->errors, [$e, http_response_code()]);
+						$directOutput = ob_get_contents();
+						ob_clean();
+
+						// check the response of the custom exception messages callable
+						if (!is_object($response)) {
+							if (!empty($directOutput)) {
+								echo $directOutput;
+								exit;
+							} elseif (!empty($response)) {
+								echo $response;
+								exit;
+							} else {
+								http_response_code(500);
+								throw new \Exception("<h3>Error !</h3>\"<b>Error handler must return something !</b>\"");
+								exit;
+							}
+						} else {
+							echo $response->getResponse();
+							exit;
+						}
+					}
+				}
+			}
+		} else {
+			try {
+				// matche return the controller response object to set to the user
+				// if no match happen the dispatchers send an exception with the appropriate http status code				
+				$matche = $this->appDispatcher->matche();
+				if (!is_object($matche)) {
+					if (!is_null($matche))
+						echo $matche;
+					else {
+						http_response_code(500);
+						throw new \Exception("<h3>Error !</h3>\"<b>Controller must return something !</b>\"");
+					}
+				} else
+					echo $matche->getResponse();
+			} catch (\Exception $e) {
+				http_response_code(500);
+				echo $e->getMessage(), "<br>";
+				if ($this->debug){
+					echo '<b>DEBUG MODE </b>: TRUE';
+					exit;
+				}
 			}
 		}
+
+		// custom hook
+		if (!is_null($this->after))
+			call_user_func_array($this->after, [$this]);
 	}
 }

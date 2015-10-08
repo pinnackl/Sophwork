@@ -11,6 +11,7 @@ namespace Sophwork\modules\handlers\dispatchers;
 
 use Sophwork\core\Sophwork;
 use Sophwork\app\app\SophworkApp;
+use Sophwork\modules\handlers\requests\Requests;
 
 class AppDispatcher
 {
@@ -35,8 +36,10 @@ class AppDispatcher
 					return call_user_func_array($controllersAndArgs['controllerClosure'], $controllersAndArgs['args']);
 				}
 			}
+			http_response_code(404);
 			throw new \Exception("<h3>Error ! No route found  for : </h3>\"<b>" . $this->resolve() . "</b>\"");
 		} else {
+			http_response_code(500);
 			throw new \Exception("<h3>Fatal error !</h3>\"<b>No routes declared for this application !</b>\"");
 		}
 	}
@@ -61,7 +64,7 @@ class AppDispatcher
 				if ($route === $routes) {
 					return [
 						'controllerClosure' => $toController,
-						'args' => [$this->app],
+						'args' => [$this->app, new Requests],
 					];
 				} else {
 					return null;
@@ -73,7 +76,7 @@ class AppDispatcher
 
 					return [
 						'controller' => sprintf("%s::%s", $controller[0],$action[0]),
-						'args' => [$this->app],
+						'args' => [$this->app, new Requests],
 					];
 				} else {
 					return null;
@@ -89,7 +92,7 @@ class AppDispatcher
 				if (preg_match_all("#$routes#", $route, $matchRoute)) {
 					array_shift($matchRoute);
 
-					$args = [$this->app];
+					$args = [$this->app, new Requests];
 					foreach ($matchRoute as $key => $value) {
 						$args[] = $value[0];
 					}
@@ -111,7 +114,7 @@ class AppDispatcher
 					$controller = array_keys($toController);
 					$action 	= array_values($toController);
 
-					$args = [$this->app];
+					$args = [$this->app, new Requests];
 					foreach ($matchRoute as $key => $value) {
 						$args[] = $value[0];
 					}

@@ -4,15 +4,29 @@ namespace Sophwork\modules\handlers\requests;
 
 use Sophwork\core\Sophwork;
 
-class Requests{
-
+class Requests
+{
 	protected $requestMethod;
+	protected $url;
+	protected $server;
+	protected $inputs;
 
-	public function __construct(array $headers = [], callable $calback){
-		$requestMethod = $_SERVER['REQUEST_METHOD'];
-		foreach ($headers as $key => $value) {
-			header($value);
-		}
-		$calback();
+	public function __construct(){
+		$this->requestMethod 	= $_SERVER['REQUEST_METHOD'];
+		$this->url 				= $_SERVER['REQUEST_URI'];
+		$this->server 			= $_SERVER;
+		$this->inputs			= $_GET + $_POST;
+
+		unset($_GET); unset($_POST); unset($_SERVER);
+	}
+
+	public function getHeader($url) {
+		return get_headers($url);
+	}
+
+	public function get($parameter) {
+		if (isset($this->inputs[$parameter]))
+			return $this->inputs[$parameter];
+		return false;
 	}
 }
