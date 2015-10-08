@@ -36,8 +36,10 @@ class AppDispatcher
 					return call_user_func_array($controllersAndArgs['controllerClosure'], $controllersAndArgs['args']);
 				}
 			}
+			http_response_code(404);
 			throw new \Exception("<h3>Error ! No route found  for : </h3>\"<b>" . $this->resolve() . "</b>\"");
 		} else {
+			http_response_code(500);
 			throw new \Exception("<h3>Fatal error !</h3>\"<b>No routes declared for this application !</b>\"");
 		}
 	}

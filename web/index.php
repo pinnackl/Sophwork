@@ -16,8 +16,8 @@ use Sophwork\core\Sophwork;
 use Sophwork\app\app\SophworkApp;
 use Sophwork\modules\handlers\errors\errorHandler\ErrorHandler;
 
-$autoloader->config = '/var/www/Sophwork/src';
-// $autoloader->config = __DIR__ . '/../src/';
+// $autoloader->config = '/var/www/Sophwork/src';
+$autoloader->config = __DIR__ . '/../src/';
 
 /*
  *	Create a new applicaion with the Sophwork class
@@ -28,22 +28,33 @@ $autoloader->config = '/var/www/Sophwork/src';
  */
 $app = new SophworkApp([
 	'baseUrl' => '/Sophwork/web',
-	'template' => '/var/www/Sophwork/template',
-	// 'template' => __DIR__ . '/../template/',
+	// 'template' => '/var/www/Sophwork/template',
+	'template' => __DIR__ . '/../template/',
 ]);
 
 $app->debug = true;
 $app->inject(new ErrorHandler());
 
 $app->get('/', ['MyApp\Controller\Home' => 'show'], 'home');
-$app->get('/game/{game}', ['MyApp\Controller\Home' => 'gameShow'], 'gameShow');
-$app->get('/game/{game}/edit', ['MyApp\Controller\Home' => 'gameEdit'], 'gameEdit');
-$app->get('/game/{category}/{game}', ['MyApp\Controller\Home' => 'gameCategory'], 'gameCategory');
-$app->post('/form', ['MyApp\Controller\Home' => 'form']);
-// $app->get('/blog/{id}', function($app, $id){
-// 	echo'<pre>';
-// 	var_dump($id);
+// $app->get('/game/{game}', ['MyApp\Controller\Home' => 'gameShow'], 'gameShow');
+// $app->get('/game/{game}/edit', ['MyApp\Controller\Home' => 'gameEdit'], 'gameEdit');
+// $app->get('/game/{category}/{game}', ['MyApp\Controller\Home' => 'gameCategory'], 'gameCategory');
+// $app->post('/form', ['MyApp\Controller\Home' => 'form']);
+// $app->get('/blog/{id}', function($app, $request, $id){
+	// echo'<pre>';
+	// var_dump($id);
+	// echo'</pre>';
+	// return '';
+// });
+
+// $app->errors(function (\Exception $e, $errorCode){
+// });
+
+// $app->after(function ($app) {
+// 	echo'<pre style="background:#ffffff">';
+// 	var_dump($app);
 // 	echo'</pre>';
+// 	die;
 // });
 
 $app->run();

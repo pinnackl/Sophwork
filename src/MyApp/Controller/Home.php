@@ -14,7 +14,8 @@ class Home
 		$view = $app->appView;
 		$generators = new UrlGenerator();
 		// $responses = new Responses('Error page not found', 404);
-		return $view->renderView('home');
+		return $app->abort();
+		// return $view->renderView('home');
 	}
 
 	public function blog(SophworkApp $app, Requests $requests, $id) {
