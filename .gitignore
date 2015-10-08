@@ -1,2 +1,5 @@
+src/*
+web/*
+template/*
 *.sublime-project
 *.sublime-workspace
