@@ -17,7 +17,6 @@ use Sophwork\modules\ServiceProviders\ServiceProviderInterface\ServiceProviderIn
 
 class ErrorHandler implements ServiceProviderInterface
 {
-	protected $customMessage;
 
 	public function init (SophworkApp $app, Array $parameters = []) {
 		if ($app->debug) {
@@ -26,8 +25,6 @@ class ErrorHandler implements ServiceProviderInterface
 
 			set_error_handler([$this, "errorHandler"]);
 			set_exception_handler([$this, "exceptionHandler"]);
-
-			// $this->customMessage = $customMessage;
 		}
 
 		return 'ErrorHandler';
