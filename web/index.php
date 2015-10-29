@@ -1,7 +1,7 @@
 <?php
 /**
  *	This file is a part of the Sophwork project
- *	@Tested version : Sophwork.0.2.0
+ *	@version : Sophwork.0.2.0
  *	@author : Syu93
  *	--
  *	This file if for exemple purpose
@@ -27,15 +27,16 @@ $autoloader->config = __DIR__ . '/../src/';
  *		- appView class
  */
 $app = new SophworkApp([
-	'baseUrl' => '/Sophwork/web',
+	// 'baseUrl' => '/Sophwork/web',
 	// 'template' => '/var/www/Sophwork/template',
-	'template' => __DIR__ . '/../template/',
+	// 'template' => __DIR__ . '/../template/',
 ]);
 
-$app->debug = true;
-$app->inject(new ErrorHandler());
+// $app->debug = true;
+// $app->inject(new ErrorHandler());
 
 $app->get('/', ['MyApp\Controller\Home' => 'show'], 'home');
+$app->get('/hello/{name}', ['MyApp\Controller\Home' => 'hello'], 'hello');
 // $app->get('/game/{game}', ['MyApp\Controller\Home' => 'gameShow'], 'gameShow');
 // $app->get('/game/{game}/edit', ['MyApp\Controller\Home' => 'gameEdit'], 'gameEdit');
 // $app->get('/game/{category}/{game}', ['MyApp\Controller\Home' => 'gameCategory'], 'gameCategory');
