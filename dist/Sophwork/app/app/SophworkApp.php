@@ -48,8 +48,16 @@ class SophworkApp extends Sophwork
 	 */
 	public function __construct($config = null) {
 		parent::__construct();
-		if (is_null($config))
-			$this->config 			= Sophwork::getConfig();
+		if (is_null($config)) {
+			if (Sophwork::getConfig())
+				$this->config 			= Sophwork::getConfig();
+			else {
+				$this->config 			= [
+					"baseUrl"			=> "",
+					"template"			=> "",
+					];
+			}
+		}
 		else
 			$this->config 			= $config;
 
