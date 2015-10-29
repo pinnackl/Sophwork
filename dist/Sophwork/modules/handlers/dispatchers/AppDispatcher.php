@@ -131,9 +131,9 @@ class AppDispatcher
 	}
 
 	protected function resolve () {
-		$baseURL = isset($this->app->config['baseUrl']) ? $this->app->config['baseUrl'] : "";
+		$baseUri = isset($this->app->config['baseUri']) ? $this->app->config['baseUri'] : "";
 
-		preg_match("#".$baseURL."([^?&]*)#", $_SERVER['REQUEST_URI'], $matches);
+		preg_match("#".$baseUri."([^?&]*)#", $_SERVER['REQUEST_URI'], $matches);
 		return isset($matches[1])? $matches[1] : false;
 	}
 }

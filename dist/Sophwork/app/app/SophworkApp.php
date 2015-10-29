@@ -53,7 +53,7 @@ class SophworkApp extends Sophwork
 				$this->config 			= Sophwork::getConfig();
 			else {
 				$this->config 			= [
-					"baseUrl"			=> "",
+					"baseUri"			=> "",
 					"template"			=> "",
 					];
 			}

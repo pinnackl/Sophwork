@@ -16,7 +16,10 @@ use Sophwork\core\Sophwork;
 use Sophwork\app\app\SophworkApp;
 use Sophwork\modules\handlers\errors\errorHandler\ErrorHandler;
 
+// Set up the source path for the autoloader
+	// Unix env
 // $autoloader->config = '/var/www/Sophwork/src';
+	// Windows env
 $autoloader->config = __DIR__ . '/../src/';
 
 /*
@@ -27,8 +30,10 @@ $autoloader->config = __DIR__ . '/../src/';
  *		- appView class
  */
 $app = new SophworkApp([
-	// 'baseUrl' => '/Sophwork/web',
+	// 'baseUri' => '', //	base uri
+		// Unix env
 	// 'template' => '/var/www/Sophwork/template',
+		// Windows env
 	// 'template' => __DIR__ . '/../template/',
 ]);
 
