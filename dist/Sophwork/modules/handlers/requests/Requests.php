@@ -13,7 +13,7 @@ class Requests
 
 	public function __construct(){
 		$this->requestMethod 	= $_SERVER['REQUEST_METHOD'];
-		$this->url 				= $_SERVER['REQUEST_URI'];
+		$this->uri 				= $_SERVER['REQUEST_URI'];
 		$this->server 			= $_SERVER;
 		$this->inputs			= $_GET + $_POST;
 
