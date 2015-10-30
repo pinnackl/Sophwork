@@ -16,28 +16,34 @@ class SophworkDM{
 	public $link;
 	public $config;
 
-	public function __construct($config){
+	public function __construct($config)
+	{
 		$this->setConfig($config);
 		$this->link = $this->dbConnect();
 	}
 
-	public function __get($param){
+	public function __get($param)
+	{
 		return $this->$param;
 	}
 
-	public function __set($param, $value){
+	public function __set($param, $value)
+	{
 		$this->$param = $value;
 	}
 
-	public function setConfig($config){
+	public function setConfig($config)
+	{
 		$this->config = $config;
 	}
 	
-	public function getConfig(){
+	public function getConfig()
+	{
 		return $this->config;
 	}
 
-	public function dbConnect(){
+	public function dbConnect()
+	{
 		if(sizeof($this->config) >= 4){
 			extract($this->config);
 			try{
@@ -57,7 +63,8 @@ class SophworkDM{
 		return null;
 	}
 
-	public function create($entityName){
+	public function create($entityName)
+	{
 		$entity = new SophworkDMEntities();
 			$entity->setTable($entityName);
 		$req1 = $this->link->query("show tables where Tables_in_".$this->config['db_name']." = '".$entityName."'");
@@ -87,7 +94,8 @@ class SophworkDM{
 		return $entity;
 	}
 
-    public function select($table, $where = '', $fields = '*', $order = '', $limit = null, $offset = null){
+    public function select($table, $where = '', $fields = '*', $order = '', $limit = null, $offset = null)
+    {
         $query = 'SELECT ' . $fields . ' FROM ' . $table
                . (($where) ? ' WHERE ' . $where : '')
                . (($limit) ? ' LIMIT ' . $limit : '')
@@ -96,7 +104,8 @@ class SophworkDM{
         return $req = $this->link->query($query);
     }
 
-    public function insert($table, array $data){
+    public function insert($table, array $data)
+    {
         $fields = implode(',', array_keys($data));
         $prepare = ':' . implode(', :', array_keys($data));
         $query = 'INSERT INTO ' . $table . ' (' . $fields . ') ' . ' VALUES (' . $prepare . ')';
@@ -109,7 +118,8 @@ class SophworkDM{
         $this->data[$this->getPk()] = $this->link->lastInsertId();
     }
 
-    public function update($table, array $data, $where = ''){
+    public function update($table, array $data, $where = '')
+    {
         $set = array();
         foreach ($data as $field => $value) {
             $set[] = $field . '= :' . $field;
@@ -127,7 +137,8 @@ class SophworkDM{
         return $req->rowCount();
     }
 
-    public function delete($table, $where = ''){	// FIXME : To test
+    public function delete($table, $where = '')
+    {	// FIXME : To test
         $query = 'DELETE FROM ' . $table
                . (($where) ? ' WHERE ' . $where : '');
         $req = $this->link->query($query);

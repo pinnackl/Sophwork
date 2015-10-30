@@ -10,7 +10,8 @@ use Sophwork\modules\generators\urls\UrlGenerator;
 
 class Home
 {
-	public function show(SophworkApp $app, Requests $requests) {
+	public function show(SophworkApp $app, Requests $requests) 
+	{
 		$view = $app->appView;
 		$generators = new UrlGenerator();
 		// 
@@ -24,7 +25,8 @@ class Home
 		// return $app->abort();
 	}
 
-	public function hello(SophworkApp $app, Requests $requests, $name) {
+	public function hello(SophworkApp $app, Requests $requests, $name) 
+	{
 		// $view = $app->appView;
 		// $generators = new UrlGenerator();
 		// $responses = new Responses('Error page not found', 404);
@@ -33,11 +35,13 @@ class Home
 		return '<h1>Hello ' . $name . '</h1>';
 	}
 
-	public function blog(SophworkApp $app, Requests $requests, $id) {
+	public function blog(SophworkApp $app, Requests $requests, $id) 
+	{
 		return new Responses("Blog ID is : <b>" . $id . "</b>");
 	}
 
-	public function contact(SophworkApp $app) {
+	public function contact(SophworkApp $app) 
+	{
 		$view = $app->appView;
 
 		return $view->renderView('contact', [
@@ -45,7 +49,8 @@ class Home
 		]);
 	}
 
-	public function gameCategory (SophworkApp $app, Requests $requests, $category, $game){
+	public function gameCategory (SophworkApp $app, Requests $requests, $category, $game)
+	{
 		echo'<pre>';
 		var_dump('<b>category</b>');
 		var_dump($category);
@@ -54,7 +59,8 @@ class Home
 		echo'</pre>';
 	}
 
-	public function gameShow(SophworkApp $app, Requests $requests, $game) {
+	public function gameShow(SophworkApp $app, Requests $requests, $game) 
+	{
 		$baseUrl = $app->config['baseUrl'];
 		$view = $app->appView;
 		$app->inject(new UrlGenerator());
@@ -65,7 +71,8 @@ class Home
 		]);
 	}
 
-	public function gameEdit(SophworkApp $app, Requests $requests, $game) {
+	public function gameEdit(SophworkApp $app, Requests $requests, $game) 
+	{
 		$baseUrl = $app->config['baseUrl'];
 		$view = $app->appView;
 		$app->inject(new UrlGenerator());
@@ -78,8 +85,8 @@ class Home
 		]);
 	}
 
-	public function form(SophworkApp $app, Requests $requests) {
-
+	public function form(SophworkApp $app, Requests $requests) 
+	{
 		return new Responses("Your message :<br><b>" . $requests->get('gameId') . "</b>");
 	}
 }

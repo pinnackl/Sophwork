@@ -17,11 +17,13 @@ class AppDispatcher
 	protected $config;
 	protected $requests;
 
-	public function __construct(SophworkApp $app) {
+	public function __construct(SophworkApp $app) 
+	{
 		$this->app 		= $app;
 	}
 
-	public function matche($requests) {
+	public function matche($requests) 
+	{
 		$this->requests = $requests;
 		if(!($this->requests->requestMethod))
 			return null;
@@ -51,7 +53,8 @@ class AppDispatcher
 	 * @param  String $toController Controller to use when mattch
 	 * @return String/Object        Class controller to use when match case
 	 */
-	protected function dispatch ($routes, $toController) {
+	protected function dispatch ($routes, $toController) 
+	{
 		/**
 		 * $routes - Routes from the list of declared routes
 		 * $route  - Actual route from the URI
@@ -131,7 +134,8 @@ class AppDispatcher
 		}
 	}
 
-	protected function resolve () {
+	protected function resolve () 
+	{
 		$baseUri = isset($this->app->config['baseUri']) ? $this->app->config['baseUri'] : "";
 
 		preg_match("#".$baseUri."([^?&]*)#", $this->requests->uri, $matches);

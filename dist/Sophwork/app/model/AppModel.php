@@ -18,7 +18,8 @@ class AppModel
 	protected $data;
     protected $link;
 
-	public function __construct($config = null) {
+	public function __construct($config = null) 
+	{
 		if (is_null($config))
 			$this->config 				= Sophwork::getConfig();
 		else
@@ -27,15 +28,18 @@ class AppModel
         $this->link = $this->connectDatabase();
 	}
 
-	public function __get($param) {
+	public function __get($param) 
+	{
 		return $this->$param;
 	}
 
-	public function __set($param, $value) {
+	public function __set($param, $value) 
+	{
         $this->$param = $value;
 	}
 
-	public function connectDatabase(){
+	public function connectDatabase()
+	{
         if(is_null($this->config) || (!isset($db_host) || !isset($db_name) || !isset($db_login) ||!isset($db_password)))
         	return null;
         extract($this->config);

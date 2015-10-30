@@ -72,7 +72,8 @@ class Responses{
 		511 => 'Network Authentication Required', // RFC6585
 	);
 	
-	public function __construct($response = null, $statusCode = 200, $headers = []) {
+	public function __construct($response = null, $statusCode = 200, $headers = []) 
+	{
 		$this->setResponse($response);
 		$this->setStatusCode($statusCode);
 		$this->headers = $headers;
@@ -80,27 +81,33 @@ class Responses{
 		$this->sendHeaders();
 	}
 
-	public function setResponse($response = null) {
+	public function setResponse($response = null) 
+	{
 		$this->response = $response;
 	}	
 
-	public function getResponse() {
+	public function getResponse() 
+	{
 		return $this->response;
 	}
 
-	public function setStatusCode($statusCode) {
+	public function setStatusCode($statusCode) 
+	{
 		$this->statusCode = $statusCode;
 	}
 
-	public function getStatusCode() {
+	public function getStatusCode() 
+	{
 		return $this->statusCode;
 	}
 
-	public function setHeader($header) {
+	public function setHeader($header) 
+	{
 		$this->headers[]	 = $header;
 	}
 
-	public function sendHeaders() {
+	public function sendHeaders() 
+	{
 		if (headers_sent()) {
 			return $this;
 		}

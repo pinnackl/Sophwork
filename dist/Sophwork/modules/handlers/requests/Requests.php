@@ -11,7 +11,8 @@ class Requests
 	protected $server;
 	protected $inputs;
 
-	public function __construct(){
+	public function __construct()
+	{
 		$this->requestMethod 	= $_SERVER['REQUEST_METHOD'];
 		$this->uri 				= $_SERVER['REQUEST_URI'];
 		$this->server 			= $_SERVER;
@@ -20,15 +21,18 @@ class Requests
 		unset($_GET); unset($_POST); unset($_SERVER);
 	}
 
-	public function __get ($param) {
+	public function __get ($param) 
+	{
 		return $this->$param;
 	}
 
-	public function getHeader($url) {
+	public function getHeader($url) 
+	{
 		return get_headers($url);
 	}
 
-	public function get($parameter) {
+	public function get($parameter) 
+	{
 		if (isset($this->inputs[$parameter]))
 			return $this->inputs[$parameter];
 		return false;
