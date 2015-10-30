@@ -31,7 +31,7 @@ $autoloader->config = __DIR__ . '/../src/';
  * 	Set up app parameters here or in the config file
  */
 $app = new SophworkApp([
-	'baseUri' => '/web',
+	// 'baseUri' => '',
 	'template' => __DIR__ . '/../template/',
 ]);
 
@@ -54,10 +54,20 @@ $app->inject(new ErrorHandler());
  * 		- post
  * 	You can also attribute them a name so you can use UrlGenerator to create links
  */
-$app->get('/', ['MyApp\Controller\Home' => 'show'], 'home');	// Separate controller file (recommended)
-$app->get('/hello/{name}', function(SophworkApp $app, requests $request, $name){		// Inline controller
+
+// Separate controller file (recommended)
+$app->get('/', ['MyApp\Controller\Home' => 'show'], 'home');
+// ->before(function($app, $request){
+// 	$requests // ...
+// });
+
+$app->get('/{name}/', function(SophworkApp $app, requests $request, $name){		// Inline controller
 	return "<h1>Hello " . $name . "</h1>";
 });
+// ->before(function($app, $request){
+	
+// });
+
 $app->post('/form', ['MyApp\Controller\Home' => 'form']);
 
 /**

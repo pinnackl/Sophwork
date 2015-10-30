@@ -14,6 +14,7 @@ use Sophwork\app\view\AppView;
 use Sophwork\app\model\AppModel;
 use Sophwork\app\controller\AppController;
 use Sophwork\modules\handlers\dispatchers\AppDispatcher;
+use Sophwork\modules\handlers\dispatchers\RouteMiddleware;
 
 class SophworkApp extends Sophwork
 {
@@ -102,6 +103,7 @@ class SophworkApp extends Sophwork
 			$this->routes['GET'][$alias] = $route;
 		else
 			$this->routes['GET'][] = $route;
+		return new RouteMiddleware($this->appDispatcher, $route['route']);
 	}
 
 	/**

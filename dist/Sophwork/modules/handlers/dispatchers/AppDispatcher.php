@@ -14,11 +14,17 @@ use Sophwork\app\app\SophworkApp;
 
 class AppDispatcher
 {
-	protected $config;
 	protected $requests;
+	protected $middlewares;
 
 	public function __construct(SophworkApp $app) {
-		$this->app 		= $app;
+		$this->app 				= $app;
+		$this->middlewares		= ['before' => null, 'after' =>  null];
+	}
+
+	public function setMiddlewares($hook, $route, $callable) {		
+		$this->middlewares[$hook][$route] = $callable;
+		return $this;
 	}
 
 	public function matche($requests) {
@@ -32,9 +38,16 @@ class AppDispatcher
 				if (isset($controllersAndArgs['controller']) && is_callable($controllersAndArgs['controller'])){
 					$controllers = preg_split("/::/", $controllersAndArgs['controller']);
 					$controler = new $controllers[0];
+					if (!is_null($controllersAndArgs['before']))
+						call_user_func_array($controllersAndArgs['before'], $controllersAndArgs['args']);
 					return call_user_func_array([$controler, $controllers[1]], $controllersAndArgs['args']);
 				} else if (isset($controllersAndArgs['controllerClosure']) && is_callable($controllersAndArgs['controllerClosure'])){
+					if (!is_null($controllersAndArgs['before']))
+						call_user_func_array($controllersAndArgs['before'], $controllersAndArgs['args']);
 					return call_user_func_array($controllersAndArgs['controllerClosure'], $controllersAndArgs['args']);
+					// if (!is_null($controllersAndArgs['after'])) {
+						// call_user_func_array($controllersAndArgs['before'], $controllersAndArgs['args']);
+					// }
 				}
 			}
 			http_response_code(404);
@@ -57,40 +70,66 @@ class AppDispatcher
 		 * $route  - Actual route from the URI
 		 */
 		$route = $this->resolve();
-		
+
 		preg_match_all("/{([^{}?&]+)}/", $routes, $matches);
 
+		// Non dynamic route
 		if (empty($matches[0])) {
 			if (is_callable($toController)){
 				if ($route === $routes) {
+					$middlewareRoute 	= $route;
+
+					$before = null;
+					if (isset($this->middlewares['before'][$middlewareRoute]))
+						$before = $this->middlewares['before'][$middlewareRoute];
+
+					$after = null;
+					if (isset($this->middlewares['after'][$middlewareRoute]))
+						$after = $this->middlewares['after'][$middlewareRoute];
+
 					return [
 						'controllerClosure' => $toController,
 						'args' => [$this->app, $this->requests],
+						'before' => $before,
+						'after' => $after,
 					];
 				} else {
 					return null;
 				}
 			} else if (is_array($toController)) {
 				if ($route === $routes) {
-					$controller = array_keys($toController);
-					$action 	= array_values($toController);
+					$middlewareRoute 	= $route;
+					$controller 		= array_keys($toController);
+					$action 			= array_values($toController);
+
+					$before = null;
+					if (isset($this->middlewares['before'][$middlewareRoute]))
+						$before = $this->middlewares['before'][$middlewareRoute];
+
+					$after = null;
+					if (isset($this->middlewares['after'][$middlewareRoute]))
+						$after = $this->middlewares['after'][$middlewareRoute];
 
 					return [
 						'controller' => sprintf("%s::%s", $controller[0],$action[0]),
 						'args' => [$this->app, $this->requests],
+						'before' => $before,
+						'after' => $after,
 					];
 				} else {
 					return null;
 				}
 			}
 
-		} else {
-			$routes = str_replace("/", "\/", $routes);
-			// $dynamicParam = $routes;
-			$routes = preg_replace("/{([^{}]+)}/", "([^\/]+)", $routes);
+		} 
+		// Dynamic route
+		else {
+			$middlewareRoute 	= $routes;
+			$routes 			= str_replace("/", "\/", $routes);
+			$routes 			= preg_replace("/{([^{}]+)}/", "([^\/]+)", $routes);
 
 			if (is_callable($toController)){
-				if (preg_match_all("#$routes#", $route, $matchRoute)) {
+				if (preg_match_all("#$routes$#", $route, $matchRoute)) {
 					array_shift($matchRoute);
 
 					$args = [$this->app, $this->requests];
@@ -98,9 +137,19 @@ class AppDispatcher
 						$args[] = $value[0];
 					}
 
+					$before = null;
+					if (isset($this->middlewares['before'][$middlewareRoute]))
+						$before = $this->middlewares['before'][$middlewareRoute];
+
+					$after = null;
+					if (isset($this->middlewares['after'][$middlewareRoute]))
+						$after = $this->middlewares['after'][$middlewareRoute];
+
 					return [
 						'controllerClosure' => $toController,
 						'args' => $args,
+						'before' => $before,
+						'after' => $after,
 					];
 				} else {
 					return null;
@@ -109,9 +158,6 @@ class AppDispatcher
 				if (preg_match_all("#^$routes$#", $route, $matchRoute)) {
 					array_shift($matchRoute);
 
-					// preg_match_all("#{([^{}]+)}#", $dynamicParam, $paramMatch);
-					// array_shift($paramMatch);
-
 					$controller = array_keys($toController);
 					$action 	= array_values($toController);
 
@@ -120,9 +166,19 @@ class AppDispatcher
 						$args[] = $value[0];
 					}
 
+					$before = null;
+					if (isset($this->middlewares['before'][$middlewareRoute]))
+						$before = $this->middlewares['before'][$middlewareRoute];
+
+					$after = null;
+					if (isset($this->middlewares['after'][$middlewareRoute]))
+						$after = $this->middlewares['after'][$middlewareRoute];
+
 					return [
 						'controller' => sprintf("%s::%s", $controller[0],$action[0]),
 						'args' => $args,
+						'before' => $before,
+						'after' => $after,
 					];
 				} else {
 					return null;
