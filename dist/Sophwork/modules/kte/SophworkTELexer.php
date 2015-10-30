@@ -16,7 +16,8 @@ class SophworkTELexer{
 	public $environment;
 
 
-	public function __construct(){
+	public function __construct()
+	{
 		$this->rules = [];
 		$this->addLexerRule('variable-search', '/{{(\w+)}}/');
 		$this->addLexerRule('variable', '/{{($key)}}/');
@@ -33,20 +34,24 @@ class SophworkTELexer{
 		$this->addLexerRule('macros-search', '/{% macros %}(.*){% endmacros %}/s');
 		$this->addLexerRule('macros-capture', '/({% macros %})(.*)({% endmacros %})/s');
 	}
-	public function __get($param){
+	public function __get($param)
+	{
 		return $this->$param;
 	}
 
-	public function getRule($rulename){
+	public function getRule($rulename)
+	{
 		return $this->rules[$rulename];
 	}
 
-	public function addEnvironment($environment){
+	public function addEnvironment($environment)
+	{
 		$this->environment = $environment;
 	}
 
 	// NOTE !: If you pute variable in your rule beware that they no be interpreted use single quote '' and encapsule with {}
-	public function addLexerRule($rulename, $rule){
+	public function addLexerRule($rulename, $rule)
+	{
 		$this->rules[$rulename] = [];
 		$this->rules[$rulename][] = $rule; 
 	}

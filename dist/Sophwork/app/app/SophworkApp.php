@@ -48,7 +48,8 @@ class SophworkApp extends Sophwork
 	 * 	Beacause all others classes and controllers inherite from this class
 	 * 	appController is use as a singleton
 	 */
-	public function __construct($config = null) {
+	public function __construct($config = null) 
+	{
 		parent::__construct();
 		if (is_null($config)) {
 			if (Sophwork::getConfig())
@@ -92,7 +93,8 @@ class SophworkApp extends Sophwork
 	 * @param  [type] $route        [description]
 	 * @param  [type] $toController [description]
 	 */
-	public function get($route, $toController, $alias = null) {
+	public function get($route, $toController, $alias = null) 
+	{
 		$route = [
 			'route' => $route,
 			'toController' => $toController,
@@ -111,7 +113,8 @@ class SophworkApp extends Sophwork
 	 * @param  [type] $route        [description]
 	 * @param  [type] $toController [description]
 	 */
-	public function post($route, $toController, $alias = null) {
+	public function post($route, $toController, $alias = null) 
+	{
 		$route = [
 			'route' => $route,
 			'toController' => $toController,
@@ -121,32 +124,38 @@ class SophworkApp extends Sophwork
 		$this->routes['POST'][] = $route;
 	}
 
-	public function request($route, $toController) {
+	public function request($route, $toController) 
+	{
 
 	}
 
-	public function inject($depenency) {
+	public function inject($depenency) 
+	{
 		$depenencyName = $depenency->init($this);
 		$this->$depenencyName = $depenency;
 	}
 
-	public function errors($callable = null) {
+	public function errors($callable = null) 
+	{
 		$this->errors = $callable;
 	}
 
-	public function before($callable = null) {
+	public function before($callable = null) 
+	{
 		if (is_callable($callable))
 			$this->before = $callable;
 		return $this;
 	}
 
-	public function after($callable = null) {
+	public function after($callable = null) 
+	{
 		if (is_callable($callable))
 			$this->after = $callable;
 		return $this;
 	}
 
-	public function abort($errorCode = 500, $message = null) {
+	public function abort($errorCode = 500, $message = null) 
+	{
 		if (class_exists("\Sophwork\\modules\\handlers\\responses\\Responses"))
 			return new \Sophwork\modules\handlers\responses\Responses($message, $errorCode);
 		else {
@@ -155,7 +164,8 @@ class SophworkApp extends Sophwork
 		}
 	}
 
-	public function run(){
+	public function run()
+	{
 		//	Factory
 		$this->_factory['request'] = new \Sophwork\modules\handlers\requests\Requests;
 

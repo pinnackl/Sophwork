@@ -12,11 +12,13 @@ Class KTE{
 		'FL' => 'lcfirst',
 	];
 
-	public function __construct(){
+	public function __construct()
+	{
 
 	}
 
-	public static function e($value, $modifier = 'S'){
+	public static function e($value, $modifier = 'S')
+	{
 		$method = self::$modifiers[$modifier];
 		echo $method($value);
 	}
