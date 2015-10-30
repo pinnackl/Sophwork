@@ -32,6 +32,7 @@ class SophworkApp extends Sophwork
 	protected $before;
 	protected $after;
 
+	private $_factory;
 	/**
 	 *	@param none
 	 *	instanciate all Sophwork classes :
@@ -73,6 +74,8 @@ class SophworkApp extends Sophwork
 		$this->routes 				= [];
 
 		$this->debug 				= false;
+
+		$this->_factory 			= [];
 	}
 	
 	public function __set($param, $value) {
@@ -132,11 +135,13 @@ class SophworkApp extends Sophwork
 	public function before($callable = null) {
 		if (is_callable($callable))
 			$this->before = $callable;
+		return $this;
 	}
 
 	public function after($callable = null) {
 		if (is_callable($callable))
 			$this->after = $callable;
+		return $this;
 	}
 
 	public function abort($errorCode = 500, $message = null) {
@@ -149,22 +154,31 @@ class SophworkApp extends Sophwork
 	}
 
 	public function run(){
+		//	Factory
+		$this->_factory['request'] = new \Sophwork\modules\handlers\requests\Requests;
+
 		// custom hook
 		if (!is_null($this->before))
-			call_user_func_array($this->before, [$this]);
+			call_user_func_array($this->before, [$this, $this->_factory['request']]);
 
 		// check if the Sophwork error exception handler is used for this application
 		if (isset($this->ErrorHandler)) {
 			// check if the custom error messages have been set
 			// use the default exception messages
-			if(!$this->errors) {
+			if(is_null($this->errors)) {
 				try {
 					// matche return the controller response object to set to the user
 					// if no match happen the dispatchers send an exception with the appropriate http status code
-					$matche = $this->appDispatcher->matche();
+					$matche = $this->appDispatcher->matche($this->_factory['request']);
 					if (!is_object($matche)) {
-						if (!is_null($matche))
-							echo $matche;
+						if (!is_null($matche)) {
+							// custom hook
+							if (!is_null($this->after)) {
+								return call_user_func_array($this->after, [$this, new \Sophwork\modules\handlers\responses\Responses($matche)]);								
+							}
+							else
+								echo $matche;
+						}
 						else {
 							http_response_code(500);
 							throw new \Exception("<h3>Error !</h3>\"<b>Controller must return something !</b>\"");
@@ -184,7 +198,21 @@ class SophworkApp extends Sophwork
 					try {
 						// matche return the controller response object to set to the user
 						// if no match happen the dispatchers send an exception with the appropriate http status code
-						$matche = $this->appDispatcher->matche();
+						$matche = $this->appDispatcher->matche($this->_factory['request']);
+						if (!is_object($matche)) {
+							if (!is_null($matche))
+								// custom hook
+								if (!is_null($this->after)) {
+									return call_user_func_array($this->after, [$this, new \Sophwork\modules\handlers\responses\Responses($matche)]);									
+								}
+								else
+									echo $matche;
+							else {
+								http_response_code(500);
+								throw new \Exception("<h3>Error !</h3>\"<b>Controller must return something !</b>\"");
+							}
+						} else
+							echo $matche->getResponse();
 					} catch (\Exception $e) {
 						// custom exception messages handling 
 						ob_start();
@@ -216,10 +244,15 @@ class SophworkApp extends Sophwork
 			try {
 				// matche return the controller response object to set to the user
 				// if no match happen the dispatchers send an exception with the appropriate http status code				
-				$matche = $this->appDispatcher->matche();
+				$matche = $this->appDispatcher->matche($this->_factory['request']);
 				if (!is_object($matche)) {
 					if (!is_null($matche))
-						echo $matche;
+						// custom hook
+						if (!is_null($this->after)) {
+							return call_user_func_array($this->after, [$this, new \Sophwork\modules\handlers\responses\Responses($matche)]);							
+						}
+						else
+							echo $matche;
 					else {
 						http_response_code(500);
 						throw new \Exception("<h3>Error !</h3>\"<b>Controller must return something !</b>\"");
@@ -237,7 +270,8 @@ class SophworkApp extends Sophwork
 		}
 
 		// custom hook
-		if (!is_null($this->after))
-			call_user_func_array($this->after, [$this]);
+		if (!is_null($this->after)) {
+			return call_user_func_array($this->after, [$this, new \Sophwork\modules\handlers\responses\Responses($matche)]);
+		}
 	}
 }

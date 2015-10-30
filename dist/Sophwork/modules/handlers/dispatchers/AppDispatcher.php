@@ -11,22 +11,23 @@ namespace Sophwork\modules\handlers\dispatchers;
 
 use Sophwork\core\Sophwork;
 use Sophwork\app\app\SophworkApp;
-use Sophwork\modules\handlers\requests\Requests;
 
 class AppDispatcher
 {
 	protected $config;
+	protected $requests;
 
 	public function __construct(SophworkApp $app) {
 		$this->app 		= $app;
 	}
 
-	public function matche() {
-		if(!isset($_SERVER['REQUEST_METHOD']))
+	public function matche($requests) {
+		$this->requests = $requests;
+		if(!($this->requests->requestMethod))
 			return null;
 
-		if (isset($this->app->routes[$_SERVER['REQUEST_METHOD']])){
-			foreach ($this->app->routes[$_SERVER['REQUEST_METHOD']] as $key => $value) {
+		if (isset($this->app->routes[$this->requests->requestMethod])){
+			foreach ($this->app->routes[$this->requests->requestMethod] as $key => $value) {
 				$controllersAndArgs = $this->dispatch($value['route'], $value['toController']);
 				if (isset($controllersAndArgs['controller']) && is_callable($controllersAndArgs['controller'])){
 					$controllers = preg_split("/::/", $controllersAndArgs['controller']);
@@ -64,7 +65,7 @@ class AppDispatcher
 				if ($route === $routes) {
 					return [
 						'controllerClosure' => $toController,
-						'args' => [$this->app, new Requests],
+						'args' => [$this->app, $this->requests],
 					];
 				} else {
 					return null;
@@ -76,7 +77,7 @@ class AppDispatcher
 
 					return [
 						'controller' => sprintf("%s::%s", $controller[0],$action[0]),
-						'args' => [$this->app, new Requests],
+						'args' => [$this->app, $this->requests],
 					];
 				} else {
 					return null;
@@ -92,7 +93,7 @@ class AppDispatcher
 				if (preg_match_all("#$routes#", $route, $matchRoute)) {
 					array_shift($matchRoute);
 
-					$args = [$this->app, new Requests];
+					$args = [$this->app, $this->requests];
 					foreach ($matchRoute as $key => $value) {
 						$args[] = $value[0];
 					}
@@ -114,7 +115,7 @@ class AppDispatcher
 					$controller = array_keys($toController);
 					$action 	= array_values($toController);
 
-					$args = [$this->app, new Requests];
+					$args = [$this->app, $this->requests];
 					foreach ($matchRoute as $key => $value) {
 						$args[] = $value[0];
 					}
@@ -133,7 +134,7 @@ class AppDispatcher
 	protected function resolve () {
 		$baseUri = isset($this->app->config['baseUri']) ? $this->app->config['baseUri'] : "";
 
-		preg_match("#".$baseUri."([^?&]*)#", $_SERVER['REQUEST_URI'], $matches);
+		preg_match("#".$baseUri."([^?&]*)#", $this->requests->uri, $matches);
 		return isset($matches[1])? $matches[1] : false;
 	}
 }

@@ -20,6 +20,10 @@ class Requests
 		unset($_GET); unset($_POST); unset($_SERVER);
 	}
 
+	public function __get ($param) {
+		return $this->$param;
+	}
+
 	public function getHeader($url) {
 		return get_headers($url);
 	}

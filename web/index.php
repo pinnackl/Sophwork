@@ -19,9 +19,6 @@ use Sophwork\modules\handlers\errors\errorHandler\ErrorHandler;
 use Sophwork\modules\handlers\requests\Requests;
 
 // Set up the source path for the autoloader
-	// Unix env
-// $autoloader->config = '/var/www/Sophwork/src';
-	// Windows env
 $autoloader->config = __DIR__ . '/../src/';
 
 /*
@@ -34,11 +31,8 @@ $autoloader->config = __DIR__ . '/../src/';
  * 	Set up app parameters here or in the config file
  */
 $app = new SophworkApp([
-	// 'baseUri' => '',
-		// Unix env
-	// 'template' => '/var/www/Sophwork/template',
-		// Windows env
-	// 'template' => __DIR__ . '/../template/',
+	'baseUri' => '/web',
+	'template' => __DIR__ . '/../template/',
 ]);
 
 /**
@@ -47,7 +41,7 @@ $app = new SophworkApp([
  */
 
 // Force the application to display errors
-// $app->debug = true;
+$app->debug = true;
 
 $app->inject(new ErrorHandler());
 
@@ -71,18 +65,28 @@ $app->post('/form', ['MyApp\Controller\Home' => 'form']);
  *
  * NOTE : this only work if your injet the Sophwork errorHandler  in your app !
  */
-$app->errors(function (\Exception $e, $errorCode){
-	if ($errorCode == 404) {
-		return "<h1>Oups ! =(<br>Jim have died !</h1>";
-	}
-});
+// $app->errors(function($e, $errorCode) {
+// 	echo '<h1>Custom Error !</h1>';
+// 	die;
+// });
 
-$app->before(function ($app, $requests) {
+/**
+ * You can use hooks to manage default behavior of your app
+ */
 
-});
+/**
+ * before hook allows you to manage the Request before the controller is called
+ */
+// $app->before(function ($app, $requests) {
+// 	$requests // ...
+// });
 
-$app->after(function ($app, $requests) {
-
-});
+/**
+ * after hook allows you to manage the response after the controller have been called
+ */
+// $app->after(function ($app, $responses) {
+// 	// What ever you have to do here ...
+// 	echo $responses->getResponse();
+// });
 
 $app->run();

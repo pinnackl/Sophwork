@@ -13,12 +13,15 @@ class Home
 	public function show(SophworkApp $app, Requests $requests) {
 		$view = $app->appView;
 		$generators = new UrlGenerator();
-		// End up this application if something go wrong
 		// 
-		// return Responses('Error page not found', 404);
+		// return '<h1>Hello World !</h1>';
+		return ['<h1>Hello World !</h1>'];
 		// or
+		// return $view->renderView('home');
+		// or
+		// return Responses('Error page not found', 404);
+		// End up this application if something go wrong
 		// return $app->abort();
-		return $view->renderView('home');
 	}
 
 	public function hello(SophworkApp $app, Requests $requests, $name) {
