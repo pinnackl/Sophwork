@@ -14,7 +14,6 @@ class Home
 	{
 		$view = $app->appView;
 		$generators = new UrlGenerator();
-		// 
 		return '<h1>Hello World !</h1>';
 		// return ['<h1>Hello World !</h1>'];
 		// or

@@ -39,12 +39,12 @@ class RouteMiddleware
 		return $this;
 	}
 
-	// public function after($callable = null)
-	// {
-	// 	if (is_callable($callable)) {
-	// 		$this->after = $callable;
-	// 	}
-	// 	$this->setMiddlewares('after', $this->after);
-	// 	return $this;
-	// }
+	public function after($callable = null)
+	{
+		if (is_callable($callable)) {
+			$this->after = $callable;
+		}
+		$this->setMiddlewares('after', $this->after);
+		return $this;
+	}
 }

@@ -56,16 +56,23 @@ $app->inject(new ErrorHandler());
  */
 
 // Separate controller file (recommended)
-$app->get('/', ['MyApp\Controller\Home' => 'show'], 'home');
+$app->get('/', ['MyApp\Controller\Home' => 'show'], 'home')
 // ->before(function($app, $request){
-// 	$requests // ...
-// });
-
-$app->get('/{name}/', function(SophworkApp $app, requests $request, $name){		// Inline controller
-	return "<h1>Hello " . $name . "</h1>";
+// 	echo 'I am in my before event !';
+// })
+->after(function($app, $response){
+	// return '';
+	return $response;
 });
+
+// $app->get('/{name}/', function(SophworkApp $app, requests $request, $name){		// Inline controller
+// 	return "<h1>Hello " . $name . "</h1>";
+// })
 // ->before(function($app, $request){
-	
+// 	echo 'I am in my before event !';
+// })
+// ->after(function($app, $response){
+// 	return 'I am in my after event !';
 // });
 
 $app->post('/form', ['MyApp\Controller\Home' => 'form']);
@@ -94,9 +101,10 @@ $app->post('/form', ['MyApp\Controller\Home' => 'form']);
 /**
  * after hook allows you to manage the response after the controller have been called
  */
-// $app->after(function ($app, $responses) {
-// 	// What ever you have to do here ...
-// 	echo $responses->getResponse();
-// });
+$app->after(function ($app, $responses) {
+	// What ever you have to do here ...
+	// $responses->getResponse();
+	echo 'after app';
+});
 
 $app->run();

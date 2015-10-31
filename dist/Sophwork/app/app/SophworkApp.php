@@ -186,7 +186,7 @@ class SophworkApp extends Sophwork
 						if (!is_null($matche)) {
 							// custom hook
 							if (!is_null($this->after)) {
-								return call_user_func_array($this->after, [$this, new \Sophwork\modules\handlers\responses\Responses($matche)]);								
+								$after = call_user_func_array($this->after, [$this, new \Sophwork\modules\handlers\responses\Responses($matche)]);								
 							}
 							else
 								echo $matche;
@@ -215,7 +215,7 @@ class SophworkApp extends Sophwork
 							if (!is_null($matche))
 								// custom hook
 								if (!is_null($this->after)) {
-									return call_user_func_array($this->after, [$this, new \Sophwork\modules\handlers\responses\Responses($matche)]);									
+									$after = call_user_func_array($this->after, [$this, new \Sophwork\modules\handlers\responses\Responses($matche)]);									
 								}
 								else
 									echo $matche;
@@ -261,7 +261,7 @@ class SophworkApp extends Sophwork
 					if (!is_null($matche))
 						// custom hook
 						if (!is_null($this->after)) {
-							return call_user_func_array($this->after, [$this, new \Sophwork\modules\handlers\responses\Responses($matche)]);							
+							$after = call_user_func_array($this->after, [$this, new \Sophwork\modules\handlers\responses\Responses($matche)]);							
 						}
 						else
 							echo $matche;
@@ -282,8 +282,8 @@ class SophworkApp extends Sophwork
 		}
 
 		// custom hook
-		if (!is_null($this->after)) {
-			return call_user_func_array($this->after, [$this, new \Sophwork\modules\handlers\responses\Responses($matche)]);
-		}
+		// if (!is_null($this->after)) {
+		// 	return call_user_func_array($this->after, [$this, new \Sophwork\modules\handlers\responses\Responses($matche)]);
+		// }
 	}
 }

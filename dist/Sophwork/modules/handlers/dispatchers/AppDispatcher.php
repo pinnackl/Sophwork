@@ -43,14 +43,21 @@ class AppDispatcher
 					$controler = new $controllers[0];
 					if (!is_null($controllersAndArgs['before']))
 						call_user_func_array($controllersAndArgs['before'], $controllersAndArgs['args']);
-					return call_user_func_array([$controler, $controllers[1]], $controllersAndArgs['args']);
+					$response = call_user_func_array([$controler, $controllers[1]], $controllersAndArgs['args']);
+					if (!is_null($controllersAndArgs['after'])) {
+						$controllersAndArgs['args']['response'] = $response;
+						return call_user_func_array($controllersAndArgs['after'], [$controllersAndArgs['args']['app'], $controllersAndArgs['args']['response']]);
+					}
+					return $response;
 				} else if (isset($controllersAndArgs['controllerClosure']) && is_callable($controllersAndArgs['controllerClosure'])){
 					if (!is_null($controllersAndArgs['before']))
 						call_user_func_array($controllersAndArgs['before'], $controllersAndArgs['args']);
-					return call_user_func_array($controllersAndArgs['controllerClosure'], $controllersAndArgs['args']);
-					// if (!is_null($controllersAndArgs['after'])) {
-						// call_user_func_array($controllersAndArgs['before'], $controllersAndArgs['args']);
-					// }
+					$response = call_user_func_array($controllersAndArgs['controllerClosure'], $controllersAndArgs['args']);
+					if (!is_null($controllersAndArgs['after'])) {
+						$controllersAndArgs['args']['response'] = $response;
+						return call_user_func_array($controllersAndArgs['after'], [$controllersAndArgs['args']['app'], $controllersAndArgs['args']['response']]);
+					}
+					return $response;
 				}
 			}
 			http_response_code(404);
@@ -93,7 +100,7 @@ class AppDispatcher
 
 					return [
 						'controllerClosure' => $toController,
-						'args' => [$this->app, $this->requests],
+						'args' => ['app' => $this->app, 'requests' => $this->requests],
 						'before' => $before,
 						'after' => $after,
 					];
@@ -116,7 +123,7 @@ class AppDispatcher
 
 					return [
 						'controller' => sprintf("%s::%s", $controller[0],$action[0]),
-						'args' => [$this->app, $this->requests],
+						'args' => ['app' => $this->app, 'requests' => $this->requests],
 						'before' => $before,
 						'after' => $after,
 					];
@@ -136,7 +143,7 @@ class AppDispatcher
 				if (preg_match_all("#$routes$#", $route, $matchRoute)) {
 					array_shift($matchRoute);
 
-					$args = [$this->app, $this->requests];
+					$args = ['app' => $this->app, 'requests' => $this->requests];
 					foreach ($matchRoute as $key => $value) {
 						$args[] = $value[0];
 					}
@@ -165,7 +172,7 @@ class AppDispatcher
 					$controller = array_keys($toController);
 					$action 	= array_values($toController);
 
-					$args = [$this->app, $this->requests];
+					$args = ['app' => $this->app, 'requests' => $this->requests];
 					foreach ($matchRoute as $key => $value) {
 						$args[] = $value[0];
 					}
