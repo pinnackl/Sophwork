@@ -32,7 +32,7 @@ class Autoloader
 
 	public function __construct()
 	{
-		$this->config = null;
+		$this->sources = __DIR__ . '/../src/';
 		spl_autoload_register([$this, 'autoload']);
 		spl_autoload_register([$this, 'thirdPartyAutoload']);
 	}
@@ -70,7 +70,7 @@ class Autoloader
 	    if ($lastNsPos = strrpos($className, '\\')) {
 	        $namespace = substr($className, 0, $lastNsPos);
 	        $className = substr($className, $lastNsPos + 1);
-	        $fileName  = str_replace('\\', DIRECTORY_SEPARATOR, $this->config . DIRECTORY_SEPARATOR . $namespace) . DIRECTORY_SEPARATOR;
+	        $fileName  = str_replace('\\', DIRECTORY_SEPARATOR, $this->sources . DIRECTORY_SEPARATOR . $namespace) . DIRECTORY_SEPARATOR;
 	    }
 	    $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
 	    if(file_exists($fileName))

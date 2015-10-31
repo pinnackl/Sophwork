@@ -19,7 +19,7 @@ use Sophwork\modules\handlers\errors\errorHandler\ErrorHandler;
 use Sophwork\modules\handlers\requests\Requests;
 
 // Set up the source path for the autoloader
-$autoloader->config = __DIR__ . '/../src/';
+$autoloader->sources = __DIR__ . '/../src/';
 
 /*
  *	Create a new applicaion with the Sophwork class
