@@ -185,10 +185,10 @@ class SophworkApp extends Sophwork
 					if (!is_object($matche)) {
 						if (!is_null($matche)) {
 							// custom hook
-							if (!is_null($this->after)) {
-								$after = call_user_func_array($this->after, [$this, new \Sophwork\modules\handlers\responses\Responses($matche)]);								
-							}
-							else
+							// if (!is_null($this->after)) {
+							// 	$after = call_user_func_array($this->after, [$this, new \Sophwork\modules\handlers\responses\Responses($matche)]);								
+							// }
+							// elseif
 								echo $matche;
 						}
 						else {
@@ -214,10 +214,10 @@ class SophworkApp extends Sophwork
 						if (!is_object($matche)) {
 							if (!is_null($matche))
 								// custom hook
-								if (!is_null($this->after)) {
-									$after = call_user_func_array($this->after, [$this, new \Sophwork\modules\handlers\responses\Responses($matche)]);									
-								}
-								else
+								// if (!is_null($this->after)) {
+								// 	$after = call_user_func_array($this->after, [$this, new \Sophwork\modules\handlers\responses\Responses($matche)]);									
+								// }
+								// else
 									echo $matche;
 							else {
 								http_response_code(500);
@@ -260,10 +260,10 @@ class SophworkApp extends Sophwork
 				if (!is_object($matche)) {
 					if (!is_null($matche))
 						// custom hook
-						if (!is_null($this->after)) {
-							$after = call_user_func_array($this->after, [$this, new \Sophwork\modules\handlers\responses\Responses($matche)]);							
-						}
-						else
+						// if (!is_null($this->after)) {
+						// 	$after = call_user_func_array($this->after, [$this, new \Sophwork\modules\handlers\responses\Responses($matche)]);							
+						// }
+						// else
 							echo $matche;
 					else {
 						http_response_code(500);
@@ -282,8 +282,8 @@ class SophworkApp extends Sophwork
 		}
 
 		// custom hook
-		// if (!is_null($this->after)) {
-		// 	return call_user_func_array($this->after, [$this, new \Sophwork\modules\handlers\responses\Responses($matche)]);
-		// }
+		if (!is_null($this->after)) {
+			return call_user_func_array($this->after, [$this, new \Sophwork\modules\handlers\responses\Responses($matche)]);
+		}
 	}
 }

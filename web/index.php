@@ -56,14 +56,14 @@ $app->inject(new ErrorHandler());
  */
 
 // Separate controller file (recommended)
-$app->get('/', ['MyApp\Controller\Home' => 'show'], 'home')
+$app->get('/', ['MyApp\Controller\Home' => 'show'], 'home');
 // ->before(function($app, $request){
 // 	echo 'I am in my before event !';
 // })
-->after(function($app, $response){
+// ->after(function($app, $response){
 	// return '';
-	return $response;
-});
+	// return $response;
+// });
 
 // $app->get('/{name}/', function(SophworkApp $app, requests $request, $name){		// Inline controller
 // 	return "<h1>Hello " . $name . "</h1>";
@@ -94,9 +94,10 @@ $app->post('/form', ['MyApp\Controller\Home' => 'form']);
 /**
  * before hook allows you to manage the Request before the controller is called
  */
-// $app->before(function ($app, $requests) {
+$app->before(function ($app, $requests) {
 // 	$requests // ...
-// });
+	echo 'before app';
+});
 
 /**
  * after hook allows you to manage the response after the controller have been called
