@@ -56,14 +56,14 @@ $app->inject(new ErrorHandler());
  */
 
 // Separate controller file (recommended)
-$app->get('/', ['MyApp\Controller\Home' => 'show'], 'home');
+$app->get('/', ['MyApp\Controller\Home' => 'show'], 'home')
+// ;
 // ->before(function($app, $request){
 // 	echo 'I am in my before event !';
 // })
-// ->after(function($app, $response){
-	// return '';
-	// return $response;
-// });
+->after(function($app, $response){
+	echo 'controller after';
+});
 
 // $app->get('/{name}/', function(SophworkApp $app, requests $request, $name){		// Inline controller
 // 	return "<h1>Hello " . $name . "</h1>";

@@ -42,20 +42,20 @@ class AppDispatcher
 					$controllers = preg_split("/::/", $controllersAndArgs['controller']);
 					$controler = new $controllers[0];
 					if (!is_null($controllersAndArgs['before']))
-						call_user_func_array($controllersAndArgs['before'], $controllersAndArgs['args']);
+						$beforeMiddleware = call_user_func_array($controllersAndArgs['before'], $controllersAndArgs['args']);
 					$response = call_user_func_array([$controler, $controllers[1]], $controllersAndArgs['args']);
 					if (!is_null($controllersAndArgs['after'])) {
 						$controllersAndArgs['args']['response'] = $response;
-						return call_user_func_array($controllersAndArgs['after'], [$controllersAndArgs['args']['app'], $controllersAndArgs['args']['response']]);
+						$afterMiddleware = call_user_func_array($controllersAndArgs['after'], [$controllersAndArgs['args']['app'], $controllersAndArgs['args']['response']]);
 					}
 					return $response;
 				} else if (isset($controllersAndArgs['controllerClosure']) && is_callable($controllersAndArgs['controllerClosure'])){
 					if (!is_null($controllersAndArgs['before']))
-						call_user_func_array($controllersAndArgs['before'], $controllersAndArgs['args']);
+						$beforeMiddleware = call_user_func_array($controllersAndArgs['before'], $controllersAndArgs['args']);
 					$response = call_user_func_array($controllersAndArgs['controllerClosure'], $controllersAndArgs['args']);
 					if (!is_null($controllersAndArgs['after'])) {
 						$controllersAndArgs['args']['response'] = $response;
-						return call_user_func_array($controllersAndArgs['after'], [$controllersAndArgs['args']['app'], $controllersAndArgs['args']['response']]);
+						$afterMiddleware = call_user_func_array($controllersAndArgs['after'], [$controllersAndArgs['args']['app'], $controllersAndArgs['args']['response']]);
 					}
 					return $response;
 				}
