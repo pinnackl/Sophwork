@@ -17,6 +17,7 @@ use Sophwork\app\app\SophworkApp;
 use Sophwork\modules\handlers\errors\errorHandler\ErrorHandler;
 
 use Sophwork\modules\handlers\requests\Requests;
+use Sophwork\modules\handlers\responses\Responses;
 
 // Set up the source path for the autoloader
 $autoloader->sources = __DIR__ . '/../src/';
@@ -43,7 +44,18 @@ $app = new SophworkApp([
 // Force the application to display errors
 $app->debug = true;
 
+// Inject the ErrorHandler in the app
 $app->inject(new ErrorHandler());
+
+/**
+ * Declare your own error handler and customise your message to the user
+ *
+ * NOTE : this only work if your injet the Sophwork errorHandler  in your app !
+ */
+$app->errors(function($e, $errorCode) {
+	echo '<h1>Custom Error !</h1>';
+	die;
+});
 
 /**
  * Simply declare your routes and the patern to match
@@ -56,56 +68,56 @@ $app->inject(new ErrorHandler());
  */
 
 // Separate controller file (recommended)
-$app->get('/', ['MyApp\Controller\Home' => 'show'], 'home')
-// ;
-// ->before(function($app, $request){
-// 	echo 'I am in my before event !';
-// })
-->after(function($app, $response){
-	echo 'controller after';
+$route = $app->get('/', ['MyApp\Controller\Home' => 'show'], 'home');
+
+/**
+ * You can use "controller hooks" to manage default behavior of your controllers
+ *
+ * "controller before hook" allows you to manage the Request before the controller is called
+ * 
+ * NOTE : If a "before hook" or "controller before hook" returns a Responses object
+ * the controller that match the route will not be run
+ * and the response passe directly to the "after hook"
+ */
+$route->before(function($app, $request){
+	echo 'before controller<br>';
+	// return new Responses('before controller that return a response object<br>');
 });
 
-// $app->get('/{name}/', function(SophworkApp $app, requests $request, $name){		// Inline controller
-// 	return "<h1>Hello " . $name . "</h1>";
-// })
-// ->before(function($app, $request){
-// 	echo 'I am in my before event !';
-// })
-// ->after(function($app, $response){
-// 	return 'I am in my after event !';
-// });
+/**
+ * "controller after hook" allows you to manage the response after the controller have been called
+ * but before the "after hook"
+ */
+$route->after(function($app, $response, $requests){
+	echo 'controller after<br>';
+	return $response . '<h2>We came in peace!</h2>';
+});
+
+$app->get('/{name}/', function(SophworkApp $app, requests $request, $name){		// Inline controller
+	return "<h1>Hello " . $name . "</h1>";
+});
 
 $app->post('/form', ['MyApp\Controller\Home' => 'form']);
 
 /**
- * Declare your own error handler and customise your message to the user
- *
- * NOTE : this only work if your injet the Sophwork errorHandler  in your app !
- */
-// $app->errors(function($e, $errorCode) {
-// 	echo '<h1>Custom Error !</h1>';
-// 	die;
-// });
-
-/**
- * You can use hooks to manage default behavior of your app
- */
-
-/**
- * before hook allows you to manage the Request before the controller is called
+ * You can use "hooks" to manage default behavior of your app
+ * 
+ * "before hook" allows you to manage the Request before the controller is called
  */
 $app->before(function ($app, $requests) {
-// 	$requests // ...
-	echo 'before app';
+	// $requests // ...
+	echo 'before app<br>';
+	// return new Responses('before controller that return a response object<br>');
 });
 
 /**
- * after hook allows you to manage the response after the controller have been called
+ * "after hook" allows you to manage the response after the controller have been called
  */
 $app->after(function ($app, $responses) {
 	// What ever you have to do here ...
 	// $responses->getResponse();
-	echo 'after app';
+	echo 'after app<br>';
 });
 
+// Run the actual app
 $app->run();

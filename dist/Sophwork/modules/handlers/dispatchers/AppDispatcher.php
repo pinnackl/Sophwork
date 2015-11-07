@@ -41,21 +41,43 @@ class AppDispatcher
 				if (isset($controllersAndArgs['controller']) && is_callable($controllersAndArgs['controller'])){
 					$controllers = preg_split("/::/", $controllersAndArgs['controller']);
 					$controler = new $controllers[0];
-					if (!is_null($controllersAndArgs['before']))
+					if (!is_null($controllersAndArgs['before'])) {
 						$beforeMiddleware = call_user_func_array($controllersAndArgs['before'], $controllersAndArgs['args']);
+						if (is_object($beforeMiddleware) && get_class($beforeMiddleware) === "Sophwork\\modules\\handlers\\responses\\Responses") {
+							return $beforeMiddleware;
+						}
+					}
 					$response = call_user_func_array([$controler, $controllers[1]], $controllersAndArgs['args']);
 					if (!is_null($controllersAndArgs['after'])) {
 						$controllersAndArgs['args']['response'] = $response;
-						$afterMiddleware = call_user_func_array($controllersAndArgs['after'], [$controllersAndArgs['args']['app'], $controllersAndArgs['args']['response']]);
+						$afterMiddleware = call_user_func_array($controllersAndArgs['after'], [
+								$controllersAndArgs['args']['app'],
+								$controllersAndArgs['args']['response'],
+								$controllersAndArgs['args']['requests'],
+							]);
+						if (isset($afterMiddleware)) {
+							$response = $afterMiddleware;
+						}
 					}
 					return $response;
 				} else if (isset($controllersAndArgs['controllerClosure']) && is_callable($controllersAndArgs['controllerClosure'])){
-					if (!is_null($controllersAndArgs['before']))
+					if (!is_null($controllersAndArgs['before'])) {
 						$beforeMiddleware = call_user_func_array($controllersAndArgs['before'], $controllersAndArgs['args']);
+						if (is_object($beforeMiddleware) && get_class($beforeMiddleware) === "Sophwork\\modules\\handlers\\responses\\Responses") {
+							return $beforeMiddleware;
+						}
+					}
 					$response = call_user_func_array($controllersAndArgs['controllerClosure'], $controllersAndArgs['args']);
 					if (!is_null($controllersAndArgs['after'])) {
 						$controllersAndArgs['args']['response'] = $response;
-						$afterMiddleware = call_user_func_array($controllersAndArgs['after'], [$controllersAndArgs['args']['app'], $controllersAndArgs['args']['response']]);
+						$afterMiddleware = call_user_func_array($controllersAndArgs['after'], [
+								$controllersAndArgs['args']['app'],
+								$controllersAndArgs['args']['response'],
+								$controllersAndArgs['args']['requests'],
+							]);
+						if (isset($afterMiddleware)) {
+							$response = $afterMiddleware;
+						}
 					}
 					return $response;
 				}

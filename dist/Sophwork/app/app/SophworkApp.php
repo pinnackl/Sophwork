@@ -164,6 +164,7 @@ class SophworkApp extends Sophwork
 		}
 	}
 
+	// FIXME : To refactor
 	public function run()
 	{
 		//	Factory
@@ -184,12 +185,7 @@ class SophworkApp extends Sophwork
 					$matche = $this->appDispatcher->matche($this->_factory['request']);
 					if (!is_object($matche)) {
 						if (!is_null($matche)) {
-							// custom hook
-							// if (!is_null($this->after)) {
-							// 	$after = call_user_func_array($this->after, [$this, new \Sophwork\modules\handlers\responses\Responses($matche)]);								
-							// }
-							// elseif
-								echo $matche;
+							echo $matche;
 						}
 						else {
 							http_response_code(500);
@@ -213,12 +209,7 @@ class SophworkApp extends Sophwork
 						$matche = $this->appDispatcher->matche($this->_factory['request']);
 						if (!is_object($matche)) {
 							if (!is_null($matche))
-								// custom hook
-								// if (!is_null($this->after)) {
-								// 	$after = call_user_func_array($this->after, [$this, new \Sophwork\modules\handlers\responses\Responses($matche)]);									
-								// }
-								// else
-									echo $matche;
+								echo $matche;
 							else {
 								http_response_code(500);
 								throw new \Exception("<h3>Error !</h3>\"<b>Controller must return something !</b>\"");
@@ -259,12 +250,7 @@ class SophworkApp extends Sophwork
 				$matche = $this->appDispatcher->matche($this->_factory['request']);
 				if (!is_object($matche)) {
 					if (!is_null($matche))
-						// custom hook
-						// if (!is_null($this->after)) {
-						// 	$after = call_user_func_array($this->after, [$this, new \Sophwork\modules\handlers\responses\Responses($matche)]);							
-						// }
-						// else
-							echo $matche;
+						echo $matche;
 					else {
 						http_response_code(500);
 						throw new \Exception("<h3>Error !</h3>\"<b>Controller must return something !</b>\"");
