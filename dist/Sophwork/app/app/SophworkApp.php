@@ -171,8 +171,13 @@ class SophworkApp extends Sophwork
 		$this->_factory['request'] = new \Sophwork\modules\handlers\requests\Requests;
 
 		// custom hook
-		if (!is_null($this->before))
-			call_user_func_array($this->before, [$this, $this->_factory['request']]);
+		$beforeMiddlewareResponse = null;
+		if (!is_null($this->before)) {
+			$beforeMiddleware = call_user_func_array($this->before, [$this, $this->_factory['request']]);
+			if (is_object($beforeMiddleware) && get_class($beforeMiddleware) === "Sophwork\\modules\\handlers\\responses\\Responses") {
+				$beforeMiddlewareResponse = $beforeMiddleware;
+			}			
+		}
 
 		// check if the Sophwork error exception handler is used for this application
 		if (isset($this->ErrorHandler)) {
@@ -180,9 +185,15 @@ class SophworkApp extends Sophwork
 			// use the default exception messages
 			if(is_null($this->errors)) {
 				try {
-					// matche return the controller response object to set to the user
-					// if no match happen the dispatchers send an exception with the appropriate http status code
-					$matche = $this->appDispatcher->matche($this->_factory['request']);
+					// Case if the before middleware return a respose object
+					if (!is_null($beforeMiddlewareResponse))
+						$matche = $beforeMiddlewareResponse;
+					else {
+						// matche return the controller response object to set to the user
+						// if no match happen the dispatchers send an exception with the appropriate http status code
+						$matche = $this->appDispatcher->matche($this->_factory['request']);
+					}
+
 					if (!is_object($matche)) {
 						if (!is_null($matche)) {
 							echo $matche;
@@ -204,9 +215,14 @@ class SophworkApp extends Sophwork
 				// check if custom exception messages have been set into a callable
 				if (is_callable($this->errors)) {
 					try {
-						// matche return the controller response object to set to the user
-						// if no match happen the dispatchers send an exception with the appropriate http status code
-						$matche = $this->appDispatcher->matche($this->_factory['request']);
+						// Case if the before middleware return a respose object
+						if (!is_null($beforeMiddlewareResponse))
+							$matche = $beforeMiddlewareResponse;
+						else {
+							// matche return the controller response object to set to the user
+							// if no match happen the dispatchers send an exception with the appropriate http status code
+							$matche = $this->appDispatcher->matche($this->_factory['request']);
+						}
 						if (!is_object($matche)) {
 							if (!is_null($matche))
 								echo $matche;
@@ -245,9 +261,14 @@ class SophworkApp extends Sophwork
 			}
 		} else {
 			try {
-				// matche return the controller response object to set to the user
-				// if no match happen the dispatchers send an exception with the appropriate http status code				
-				$matche = $this->appDispatcher->matche($this->_factory['request']);
+				// Case if the before middleware return a respose object
+				if (!is_null($beforeMiddlewareResponse))
+					$matche = $beforeMiddlewareResponse;
+				else {
+					// matche return the controller response object to set to the user
+					// if no match happen the dispatchers send an exception with the appropriate http status code
+					$matche = $this->appDispatcher->matche($this->_factory['request']);
+				}
 				if (!is_object($matche)) {
 					if (!is_null($matche))
 						echo $matche;
