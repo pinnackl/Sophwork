@@ -11,29 +11,75 @@ namespace Sophwork\modules\handlers\dispatchers;
 
 use Sophwork\core\Sophwork;
 use Sophwork\app\app\SophworkApp;
-use Sophwork\modules\handlers\requests\Requests;
 
 class AppDispatcher
 {
-	protected $config;
+	protected $requests;
+	protected $middlewares;
 
-	public function __construct(SophworkApp $app) {
-		$this->app 		= $app;
+	public function __construct(SophworkApp $app)
+	{
+		$this->app 				= $app;
+		$this->middlewares		= ['before' => null, 'after' =>  null];
 	}
 
-	public function matche() {
-		if(!isset($_SERVER['REQUEST_METHOD']))
+	public function setMiddlewares($hook, $route, $callable)
+	{
+		$this->middlewares[$hook][$route] = $callable;
+		return $this;
+	}
+
+	public function matche($requests) 
+	{
+		$this->requests = $requests;
+		if(!($this->requests->requestMethod))
 			return null;
 
-		if (isset($this->app->routes[$_SERVER['REQUEST_METHOD']])){
-			foreach ($this->app->routes[$_SERVER['REQUEST_METHOD']] as $key => $value) {
+		if (isset($this->app->routes[$this->requests->requestMethod])){
+			foreach ($this->app->routes[$this->requests->requestMethod] as $key => $value) {
 				$controllersAndArgs = $this->dispatch($value['route'], $value['toController']);
 				if (isset($controllersAndArgs['controller']) && is_callable($controllersAndArgs['controller'])){
 					$controllers = preg_split("/::/", $controllersAndArgs['controller']);
 					$controler = new $controllers[0];
-					return call_user_func_array([$controler, $controllers[1]], $controllersAndArgs['args']);
+					if (!is_null($controllersAndArgs['before'])) {
+						$beforeMiddleware = call_user_func_array($controllersAndArgs['before'], $controllersAndArgs['args']);
+						if (is_object($beforeMiddleware) && get_class($beforeMiddleware) === "Sophwork\\modules\\handlers\\responses\\Responses") {
+							return $beforeMiddleware;
+						}
+					}
+					$response = call_user_func_array([$controler, $controllers[1]], $controllersAndArgs['args']);
+					if (!is_null($controllersAndArgs['after'])) {
+						$controllersAndArgs['args']['response'] = $response;
+						$afterMiddleware = call_user_func_array($controllersAndArgs['after'], [
+								$controllersAndArgs['args']['app'],
+								$controllersAndArgs['args']['response'],
+								$controllersAndArgs['args']['requests'],
+							]);
+						if (isset($afterMiddleware)) {
+							$response = $afterMiddleware;
+						}
+					}
+					return $response;
 				} else if (isset($controllersAndArgs['controllerClosure']) && is_callable($controllersAndArgs['controllerClosure'])){
-					return call_user_func_array($controllersAndArgs['controllerClosure'], $controllersAndArgs['args']);
+					if (!is_null($controllersAndArgs['before'])) {
+						$beforeMiddleware = call_user_func_array($controllersAndArgs['before'], $controllersAndArgs['args']);
+						if (is_object($beforeMiddleware) && get_class($beforeMiddleware) === "Sophwork\\modules\\handlers\\responses\\Responses") {
+							return $beforeMiddleware;
+						}
+					}
+					$response = call_user_func_array($controllersAndArgs['controllerClosure'], $controllersAndArgs['args']);
+					if (!is_null($controllersAndArgs['after'])) {
+						$controllersAndArgs['args']['response'] = $response;
+						$afterMiddleware = call_user_func_array($controllersAndArgs['after'], [
+								$controllersAndArgs['args']['app'],
+								$controllersAndArgs['args']['response'],
+								$controllersAndArgs['args']['requests'],
+							]);
+						if (isset($afterMiddleware)) {
+							$response = $afterMiddleware;
+						}
+					}
+					return $response;
 				}
 			}
 			http_response_code(404);
@@ -50,56 +96,93 @@ class AppDispatcher
 	 * @param  String $toController Controller to use when mattch
 	 * @return String/Object        Class controller to use when match case
 	 */
-	protected function dispatch ($routes, $toController) {
+	protected function dispatch ($routes, $toController) 
+	{
 		/**
 		 * $routes - Routes from the list of declared routes
 		 * $route  - Actual route from the URI
 		 */
 		$route = $this->resolve();
-		
+
 		preg_match_all("/{([^{}?&]+)}/", $routes, $matches);
 
+		// Non dynamic route
 		if (empty($matches[0])) {
 			if (is_callable($toController)){
 				if ($route === $routes) {
+					$middlewareRoute 	= $route;
+
+					$before = null;
+					if (isset($this->middlewares['before'][$middlewareRoute]))
+						$before = $this->middlewares['before'][$middlewareRoute];
+
+					$after = null;
+					if (isset($this->middlewares['after'][$middlewareRoute]))
+						$after = $this->middlewares['after'][$middlewareRoute];
+
 					return [
 						'controllerClosure' => $toController,
-						'args' => [$this->app, new Requests],
+						'args' => ['app' => $this->app, 'requests' => $this->requests],
+						'before' => $before,
+						'after' => $after,
 					];
 				} else {
 					return null;
 				}
 			} else if (is_array($toController)) {
 				if ($route === $routes) {
-					$controller = array_keys($toController);
-					$action 	= array_values($toController);
+					$middlewareRoute 	= $route;
+					$controller 		= array_keys($toController);
+					$action 			= array_values($toController);
+
+					$before = null;
+					if (isset($this->middlewares['before'][$middlewareRoute]))
+						$before = $this->middlewares['before'][$middlewareRoute];
+
+					$after = null;
+					if (isset($this->middlewares['after'][$middlewareRoute]))
+						$after = $this->middlewares['after'][$middlewareRoute];
 
 					return [
 						'controller' => sprintf("%s::%s", $controller[0],$action[0]),
-						'args' => [$this->app, new Requests],
+						'args' => ['app' => $this->app, 'requests' => $this->requests],
+						'before' => $before,
+						'after' => $after,
 					];
 				} else {
 					return null;
 				}
 			}
 
-		} else {
-			$routes = str_replace("/", "\/", $routes);
-			// $dynamicParam = $routes;
-			$routes = preg_replace("/{([^{}]+)}/", "([^\/]+)", $routes);
+		} 
+		// Dynamic route
+		else {
+			$middlewareRoute 	= $routes;
+			$routes 			= str_replace("/", "\/", $routes);
+			$routes 			= preg_replace("/{([^{}]+)}/", "([^\/]+)", $routes);
 
 			if (is_callable($toController)){
-				if (preg_match_all("#$routes#", $route, $matchRoute)) {
+				if (preg_match_all("#$routes$#", $route, $matchRoute)) {
 					array_shift($matchRoute);
 
-					$args = [$this->app, new Requests];
+					$args = ['app' => $this->app, 'requests' => $this->requests];
 					foreach ($matchRoute as $key => $value) {
 						$args[] = $value[0];
 					}
 
+					$before = null;
+					if (isset($this->middlewares['before'][$middlewareRoute]))
+						$before = $this->middlewares['before'][$middlewareRoute];
+
+					$after = null;
+					if (isset($this->middlewares['after'][$middlewareRoute]))
+						$after = $this->middlewares['after'][$middlewareRoute];
+
 					return [
 						'controllerClosure' => $toController,
 						'args' => $args,
+						'before' => $before,
+						'after' => $after,
 					];
 				} else {
 					return null;
@@ -108,20 +191,27 @@ class AppDispatcher
 				if (preg_match_all("#^$routes$#", $route, $matchRoute)) {
 					array_shift($matchRoute);
 
-					// preg_match_all("#{([^{}]+)}#", $dynamicParam, $paramMatch);
-					// array_shift($paramMatch);
-
 					$controller = array_keys($toController);
 					$action 	= array_values($toController);
 
-					$args = [$this->app, new Requests];
+					$args = ['app' => $this->app, 'requests' => $this->requests];
 					foreach ($matchRoute as $key => $value) {
 						$args[] = $value[0];
 					}
 
+					$before = null;
+					if (isset($this->middlewares['before'][$middlewareRoute]))
+						$before = $this->middlewares['before'][$middlewareRoute];
+
+					$after = null;
+					if (isset($this->middlewares['after'][$middlewareRoute]))
+						$after = $this->middlewares['after'][$middlewareRoute];
+
 					return [
 						'controller' => sprintf("%s::%s", $controller[0],$action[0]),
 						'args' => $args,
+						'before' => $before,
+						'after' => $after,
 					];
 				} else {
 					return null;
@@ -130,10 +220,11 @@ class AppDispatcher
 		}
 	}
 
-	protected function resolve () {
-		$baseURL = isset($this->app->config['baseUrl']) ? $this->app->config['baseUrl'] : "";
+	protected function resolve () 
+	{
+		$baseUri = isset($this->app->config['baseUri']) ? $this->app->config['baseUri'] : "";
 
-		preg_match("#".$baseURL."([^?&]*)#", $_SERVER['REQUEST_URI'], $matches);
+		preg_match("#".$baseUri."([^?&]*)#", $this->requests->uri, $matches);
 		return isset($matches[1])? $matches[1] : false;
 	}
 }

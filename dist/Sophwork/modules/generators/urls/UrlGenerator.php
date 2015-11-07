@@ -20,7 +20,8 @@ class UrlGenerator implements ServiceProviderInterface
 	
 	private $routes;
 
-	public function init (SophworkApp $app, Array $parameters = []) {
+	public function init (SophworkApp $app, Array $parameters = []) 
+	{
 		$this->routes 		= $app->routes;
 		if (!is_null($this->routes))
 			$this->routes 	= $this->routes;
@@ -29,7 +30,8 @@ class UrlGenerator implements ServiceProviderInterface
 		return 'UrlGenerator';
 	}
 
-	public function generate($route = "/", Array $parameters = [], $rewrited = true) {
+	public function generate($route = "/", Array $parameters = [], $rewrited = true) 
+	{
 		if ($rewrited) {
 			foreach ($this->routes as $key => $routes) {
 				if (array_key_exists($route, $routes)) {

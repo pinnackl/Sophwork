@@ -14,6 +14,7 @@ use Sophwork\app\view\AppView;
 use Sophwork\app\model\AppModel;
 use Sophwork\app\controller\AppController;
 use Sophwork\modules\handlers\dispatchers\AppDispatcher;
+use Sophwork\modules\handlers\dispatchers\RouteMiddleware;
 
 class SophworkApp extends Sophwork
 {
@@ -32,6 +33,7 @@ class SophworkApp extends Sophwork
 	protected $before;
 	protected $after;
 
+	private $_factory;
 	/**
 	 *	@param none
 	 *	instanciate all Sophwork classes :
@@ -46,10 +48,19 @@ class SophworkApp extends Sophwork
 	 * 	Beacause all others classes and controllers inherite from this class
 	 * 	appController is use as a singleton
 	 */
-	public function __construct($config = null) {
+	public function __construct($config = null) 
+	{
 		parent::__construct();
-		if (is_null($config))
-			$this->config 			= Sophwork::getConfig();
+		if (is_null($config)) {
+			if (Sophwork::getConfig())
+				$this->config 			= Sophwork::getConfig();
+			else {
+				$this->config 			= [
+					"baseUri"			=> "",
+					"template"			=> "",
+					];
+			}
+		}
 		else
 			$this->config 			= $config;
 
@@ -65,6 +76,8 @@ class SophworkApp extends Sophwork
 		$this->routes 				= [];
 
 		$this->debug 				= false;
+
+		$this->_factory 			= [];
 	}
 	
 	public function __set($param, $value) {
@@ -80,7 +93,8 @@ class SophworkApp extends Sophwork
 	 * @param  [type] $route        [description]
 	 * @param  [type] $toController [description]
 	 */
-	public function get($route, $toController, $alias = null) {
+	public function get($route, $toController, $alias = null) 
+	{
 		$route = [
 			'route' => $route,
 			'toController' => $toController,
@@ -91,6 +105,7 @@ class SophworkApp extends Sophwork
 			$this->routes['GET'][$alias] = $route;
 		else
 			$this->routes['GET'][] = $route;
+		return new RouteMiddleware($this->appDispatcher, $route['route']);
 	}
 
 	/**
@@ -98,7 +113,8 @@ class SophworkApp extends Sophwork
 	 * @param  [type] $route        [description]
 	 * @param  [type] $toController [description]
 	 */
-	public function post($route, $toController, $alias = null) {
+	public function post($route, $toController, $alias = null) 
+	{
 		$route = [
 			'route' => $route,
 			'toController' => $toController,
@@ -108,30 +124,38 @@ class SophworkApp extends Sophwork
 		$this->routes['POST'][] = $route;
 	}
 
-	public function request($route, $toController) {
+	public function request($route, $toController) 
+	{
 
 	}
 
-	public function inject($depenency) {
+	public function inject($depenency) 
+	{
 		$depenencyName = $depenency->init($this);
 		$this->$depenencyName = $depenency;
 	}
 
-	public function errors($callable = null) {
+	public function errors($callable = null) 
+	{
 		$this->errors = $callable;
 	}
 
-	public function before($callable = null) {
+	public function before($callable = null) 
+	{
 		if (is_callable($callable))
 			$this->before = $callable;
+		return $this;
 	}
 
-	public function after($callable = null) {
+	public function after($callable = null) 
+	{
 		if (is_callable($callable))
 			$this->after = $callable;
+		return $this;
 	}
 
-	public function abort($errorCode = 500, $message = null) {
+	public function abort($errorCode = 500, $message = null) 
+	{
 		if (class_exists("\Sophwork\\modules\\handlers\\responses\\Responses"))
 			return new \Sophwork\modules\handlers\responses\Responses($message, $errorCode);
 		else {
@@ -140,23 +164,40 @@ class SophworkApp extends Sophwork
 		}
 	}
 
-	public function run(){
+	// FIXME : To refactor
+	public function run()
+	{
+		//	Factory
+		$this->_factory['request'] = new \Sophwork\modules\handlers\requests\Requests;
+
 		// custom hook
-		if (!is_null($this->before))
-			call_user_func_array($this->before, [$this]);
+		$beforeMiddlewareResponse = null;
+		if (!is_null($this->before)) {
+			$beforeMiddleware = call_user_func_array($this->before, [$this, $this->_factory['request']]);
+			if (is_object($beforeMiddleware) && get_class($beforeMiddleware) === "Sophwork\\modules\\handlers\\responses\\Responses") {
+				$beforeMiddlewareResponse = $beforeMiddleware;
+			}			
+		}
 
 		// check if the Sophwork error exception handler is used for this application
 		if (isset($this->ErrorHandler)) {
 			// check if the custom error messages have been set
 			// use the default exception messages
-			if(!$this->errors) {
+			if(is_null($this->errors)) {
 				try {
-					// matche return the controller response object to set to the user
-					// if no match happen the dispatchers send an exception with the appropriate http status code
-					$matche = $this->appDispatcher->matche();
+					// Case if the before middleware return a respose object
+					if (!is_null($beforeMiddlewareResponse))
+						$matche = $beforeMiddlewareResponse;
+					else {
+						// matche return the controller response object to set to the user
+						// if no match happen the dispatchers send an exception with the appropriate http status code
+						$matche = $this->appDispatcher->matche($this->_factory['request']);
+					}
+
 					if (!is_object($matche)) {
-						if (!is_null($matche))
+						if (!is_null($matche)) {
 							echo $matche;
+						}
 						else {
 							http_response_code(500);
 							throw new \Exception("<h3>Error !</h3>\"<b>Controller must return something !</b>\"");
@@ -174,9 +215,23 @@ class SophworkApp extends Sophwork
 				// check if custom exception messages have been set into a callable
 				if (is_callable($this->errors)) {
 					try {
-						// matche return the controller response object to set to the user
-						// if no match happen the dispatchers send an exception with the appropriate http status code
-						$matche = $this->appDispatcher->matche();
+						// Case if the before middleware return a respose object
+						if (!is_null($beforeMiddlewareResponse))
+							$matche = $beforeMiddlewareResponse;
+						else {
+							// matche return the controller response object to set to the user
+							// if no match happen the dispatchers send an exception with the appropriate http status code
+							$matche = $this->appDispatcher->matche($this->_factory['request']);
+						}
+						if (!is_object($matche)) {
+							if (!is_null($matche))
+								echo $matche;
+							else {
+								http_response_code(500);
+								throw new \Exception("<h3>Error !</h3>\"<b>Controller must return something !</b>\"");
+							}
+						} else
+							echo $matche->getResponse();
 					} catch (\Exception $e) {
 						// custom exception messages handling 
 						ob_start();
@@ -206,9 +261,14 @@ class SophworkApp extends Sophwork
 			}
 		} else {
 			try {
-				// matche return the controller response object to set to the user
-				// if no match happen the dispatchers send an exception with the appropriate http status code				
-				$matche = $this->appDispatcher->matche();
+				// Case if the before middleware return a respose object
+				if (!is_null($beforeMiddlewareResponse))
+					$matche = $beforeMiddlewareResponse;
+				else {
+					// matche return the controller response object to set to the user
+					// if no match happen the dispatchers send an exception with the appropriate http status code
+					$matche = $this->appDispatcher->matche($this->_factory['request']);
+				}
 				if (!is_object($matche)) {
 					if (!is_null($matche))
 						echo $matche;
@@ -229,7 +289,8 @@ class SophworkApp extends Sophwork
 		}
 
 		// custom hook
-		if (!is_null($this->after))
-			call_user_func_array($this->after, [$this]);
+		if (!is_null($this->after)) {
+			return call_user_func_array($this->after, [$this, new \Sophwork\modules\handlers\responses\Responses($matche)]);
+		}
 	}
 }

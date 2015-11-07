@@ -9,19 +9,22 @@ class htmlElement{
 	var $self_closers;
 	
 	/* constructor */
-	function __construct($type,$self_closers = array('input','img','hr','br','meta','link')){
+	function __construct($type,$self_closers = array('input','img','hr','br','meta','link'))
+	{
 		$this->type = strtolower($type);
 		$this->attributes['text'] = "";
 		$this->self_closers = $self_closers;
 	}
 	
 	/* get */
-	function get($attribute){
+	function get($attribute)
+	{
 		return $this->attributes[$attribute];
 	}
 	
 	/* set -- array or key,value */
-	function set($attribute,$value = ''){
+	function set($attribute,$value = '')
+	{
 		if(!is_array($attribute))
 		{
 			$this->attributes[$attribute] = $value;
@@ -33,7 +36,8 @@ class htmlElement{
 	}
 	
 	/* remove an attribute */
-	function remove($att){
+	function remove($att)
+	{
 		if(isset($this->attributes[$att]))
 		{
 			unset($this->attributes[$att]);
@@ -41,12 +45,14 @@ class htmlElement{
 	}
 	
 	/* clear */
-	function clear(){
+	function clear()
+	{
 		$this->attributes = array();
 	}
 	
 	/* inject */
-	function inject($object){
+	function inject($object)
+	{
 		if(@get_class($object) == __class__)
 		{
 			$this->attributes['text'].= $object->build();
@@ -54,7 +60,8 @@ class htmlElement{
 	}
 	
 	/* build */
-	function build(){
+	function build()
+	{
 		//start
 		$build = '<'.$this->type;
 		
@@ -82,7 +89,8 @@ class htmlElement{
 	}
 	
 	/* spit it out */
-	function output(){
+	function output()
+	{
 		echo $this->build();
 	}
 }

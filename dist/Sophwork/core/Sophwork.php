@@ -19,20 +19,23 @@ class Sophwork
 
 	}
 
-	public static function prevar($value){
+	public static function prevar($value)
+	{
 		echo '<pre>';
 		var_dump($value);
 		echo '</pre>';
 	}
 
-	public static function predie($value){
+	public static function predie($value)
+	{
 		echo '<pre>';
 		var_dump($value);
 		echo '</pre>';
 		die;
 	}
 
-	public static function getParam($param_name, $init_value) {
+	public static function getParam($param_name, $init_value) 
+	{
 		$param_value = $init_value;
 		if (isset($_GET[$param_name])) {
 			$param_value = htmlspecialchars($_GET[$param_name]);
@@ -40,7 +43,8 @@ class Sophwork
 		return $param_value;
 	}
 
-	public static function getConfig(){
+	public static function getConfig()
+	{
 		$config = null;
 		if ( !file_exists(dirname(dirname(__FILE__)) . '/../config.local.php') ) {
 			return false;
@@ -54,7 +58,8 @@ class Sophwork
 	 * Need to lowercase database name
 	 * @param $POST
 	 */
-	public static function setConfig($POST){
+	public static function setConfig($POST)
+	{
 		$handle = fopen(dirname(dirname(__FILE__)) . '/../config.local.php', "w+");
 		$text = "<?php\n\$config = array(\n'db_host' => '".$POST['db_host']."',\n'db_name' => '".strtolower($POST['db_name'])."',\n'db_login' => '".$POST['db_login']."',\n'db_password' => '".$POST['db_password']."',\n);
 		 ";
@@ -63,7 +68,8 @@ class Sophwork
 		require_once(dirname(dirname(__FILE__)) . '/../config.local.php');
 	}
 	
-	public static function redirect($parameters = null){
+	public static function redirect($parameters = null)
+	{
 		$s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? "s" : "";
 		$protocol = substr(strtolower($_SERVER["SERVER_PROTOCOL"]), 0, strpos(strtolower($_SERVER["SERVER_PROTOCOL"]), "/")) . $s;
 		$port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":".$_SERVER["SERVER_PORT"]);
@@ -88,12 +94,14 @@ class Sophwork
 		exit;
 	}
 
-	public static function redirectTo($referer){
+	public static function redirectTo($referer)
+	{
 		header('Location: '.$referer);
 		exit;
 	}
 
-	public static function getUrl($parameters = null){
+	public static function getUrl($parameters = null)
+	{
 		$s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? "s" : "";
 		$protocol = substr(strtolower($_SERVER["SERVER_PROTOCOL"]), 0, strpos(strtolower($_SERVER["SERVER_PROTOCOL"]), "/")) . $s;
 		$port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":".$_SERVER["SERVER_PORT"]);
@@ -116,7 +124,8 @@ class Sophwork
 		return $localUrl;
 	}
 
-	public static function camelCase($str, array $noStrip = []){
+	public static function camelCase($str, array $noStrip = [])
+	{
         // non-alpha and non-numeric characters become spaces
         $str = preg_replace('/[^a-z0-9' . implode("", $noStrip) . ']+/i', ' ', $str);
         $str = trim($str);
@@ -128,7 +137,8 @@ class Sophwork
         return $str;
 	}
 
-	public static function slug($string){
+	public static function slug($string)
+	{
 		$char = array(
 			'À' => 'a', 'Á' => 'a', 'Â' => 'a', 'Ä' => 'a', 'à' => 'a', 'á' => 'a', 'â' => 'a', 'ä' => 'a', '@' => 'a',
 			'È' => 'e', 'É' => 'e', 'Ê' => 'e', 'Ë' => 'e', 'è' => 'e', 'é' => 'e', 'ê' => 'e', 'ë' => 'e', '€' => 'e',

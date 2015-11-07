@@ -23,24 +23,29 @@ class AppView
 	];
 	public $viewData;
 
-	public function __construct($config) {
+	public function __construct($config) 
+	{
 		$this->viewData 	= [];
 		$this->templateSrc 	= isset($config['template']) ? $config['template'] : null;
 	}
 
-	public function __set($param, $value) {
+	public function __set($param, $value) 
+	{
 		$this->$param = $value;
 	}
 	
-	public function __get($param) {
+	public function __get($param) 
+	{
 		return $this->$param;
 	}
 
-	public function e($value, $modifier = 'S') {
+	public function e($value, $modifier = 'S') 
+	{
 		return $this->modifiers[$modifier]($value);
 	}
 
-	public function renderView($template, Array $data = []) {
+	public function renderView($template, Array $data = []) 
+	{
 		extract($data);
 		$filename = $this->templateSrc . '/' .$template.'.tpl';
 		ob_start();
@@ -53,7 +58,8 @@ class AppView
 		return $output;
 	}
 
-	public function getLayout($template, Array $data = []) {
+	public function getLayout($template, Array $data = []) 
+	{
 		extract($data);
 		$filename = $this->templateSrc . '/' .$template.'.tpl';
 		ob_start();

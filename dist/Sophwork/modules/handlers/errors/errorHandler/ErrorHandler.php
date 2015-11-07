@@ -17,23 +17,22 @@ use Sophwork\modules\ServiceProviders\ServiceProviderInterface\ServiceProviderIn
 
 class ErrorHandler implements ServiceProviderInterface
 {
-	protected $customMessage;
 
-	public function init (SophworkApp $app, Array $parameters = []) {
+	public function init (SophworkApp $app, Array $parameters = [])
+	{
 		if ($app->debug) {
 			error_reporting(E_ALL|E_STRICT);
 			ini_set('display_errors', $app->debug?1:0);
 
 			set_error_handler([$this, "errorHandler"]);
 			set_exception_handler([$this, "exceptionHandler"]);
-
-			// $this->customMessage = $customMessage;
 		}
 
 		return 'ErrorHandler';
 	}
 
-	public function errorHandler($severity, $message, $file, $line) {
+	public function errorHandler($severity, $message, $file, $line) 
+	{
 		//FIXME : chech all case
 	    switch ($severity) {
 	        case E_NOTICE:
@@ -71,7 +70,8 @@ class ErrorHandler implements ServiceProviderInterface
 	    }
 	}
 
-	public function exceptionHandler ($exception, $type = null) {
+	public function exceptionHandler ($exception, $type = null) 
+	{
 		echo'<pre style="word-wrap: break-word;font-size:1.1em;">';
 		echo "<b><u>Sophwork exception</u> : $type</b><br>";
 		echo 'With message : <b>',$exception->getMessage(),'</b><br>';
