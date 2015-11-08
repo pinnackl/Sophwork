@@ -1,7 +1,6 @@
 {
     "name": "pinnackl/sophwork",
     "description": "Simple PHP Oject Framework",
-    "minimum-stability": "dev",
     "require": {
         "php": ">=5.3.9"
     },
@@ -16,5 +15,6 @@
         "psr-4": {
             "Sophwork\\": "dist/Sophwork"
         }
-    }
+    },
+    "minimum-stability": "dev"
 }
