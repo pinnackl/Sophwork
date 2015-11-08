@@ -2,15 +2,8 @@
     "name": "pinnackl/sophwork",
     "description": "Simple PHP Oject Framework",
     "minimum-stability": "dev",
-    "repositories": [
-        {
-            "type": "git",
-            "url": "git@github.com:pinnackl/Sophwork.git"
-        }
-    ],
     "require": {
-        "php": ">=5.3.9",
-        "pinnackl/sophwork": "master"
+        "php": ">=5.3.9"
     },
     "license": "MIT",
     "authors": [
