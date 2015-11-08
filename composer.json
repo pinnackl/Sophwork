@@ -15,6 +15,5 @@
         "psr-4": {
             "Sophwork\\": "dist/Sophwork"
         }
-    },
-    "minimum-stability": "dev"
+    }
 }
