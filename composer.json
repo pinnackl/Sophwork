@@ -5,7 +5,7 @@
         "php": ">=5.3.9"        
     },
     "require-dev": {
-        
+        "php": ">=5.3.9"
     },
     "license": "MIT",
     "authors": [
