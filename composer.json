@@ -2,7 +2,8 @@
     "name": "pinnackl/sophwork",
     "description": "Simple PHP Oject Framework",
     "require": {
-        "php": ">=5.3.9"
+        "php": ">=5.3.9",
+        "pinnackl/sophwork": "dev-master",
     },
     "license": "MIT",
     "authors": [
@@ -15,5 +16,6 @@
         "psr-4": {
             "Sophwork\\": "dist/Sophwork"
         }
-    }
+    },
+    "minimum-stability": "dev"
 }
