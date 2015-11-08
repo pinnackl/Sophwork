@@ -3,7 +3,7 @@
     "description": "Simple PHP Oject Framework",
     "require": {
         "php": ">=5.3.9",
-        "pinnackl/sophwork": "dev-master",
+        "pinnackl/sophwork": "dev-master"
     },
     "license": "MIT",
     "authors": [
