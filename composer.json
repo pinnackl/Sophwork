@@ -16,5 +16,5 @@
             "Sophwork\\": "dist/Sophwork"
         }
     },
-    "minimum-stability": "dev-master"
+    "minimum-stability": "dev"
 }
