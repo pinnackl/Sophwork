@@ -135,6 +135,21 @@ class SophworkApp extends Sophwork
 		$this->$depenencyName = $depenency;
 	}
 
+	/**
+	 * Registers a service provider. (Symfony compatibility)
+	 * @param  ServiceProviderInterface $provider A ServiceProviderInterface instance
+	 * @param  array                    $values   An array of values that customizes the provider (Not supported yet)
+	 * @return static
+	 */
+	public function register($provider, array $values = array())
+	{
+	    $provider->register($this);
+	    foreach ($values as $key => $value) {
+	        $this[$key] = $value;
+	    }
+	    return $this;
+	}
+
 	public function errors($callable = null) 
 	{
 		$this->errors = $callable;
