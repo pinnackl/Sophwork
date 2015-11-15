@@ -1,11 +1,8 @@
 {
-    "name": "pinnackl/sophwork",
+    "name": "sophwork/sophwork",
     "description": "Simple PHP Oject Framework",
     "require": {
-        "php": ">=5.3.9"        
-    },
-    "require-dev": {
-        "php": ">=5.3.9"
+        "php": ">=5.4.0"
     },
     "license": "MIT",
     "authors": [
