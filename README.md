@@ -15,7 +15,7 @@ The aim is not to provide a production ready framework that you should use in yo
  
  As you can also download it from : [here](https://github.com/pinnackl/Sophwork/archive/0.1.1.zip)
  
-# Geting started
+# Getting started
 ## Server configuration
 You first need to configure your server to use Sophwork. You can take exemple on the .htaccess file in the sources folder. *(Make sure Apache2 mod_rewrite is enabled: here is a [quick tutorial](http://stackoverflow.com/a/5758551))*.
 ```php
@@ -62,7 +62,7 @@ Then you need to define your routes
  * 	You can also attribute them a name so you can use UrlGenerator to create links
  */
 $app->get('/', function(SophworkApp $app, requests $request) {
-	return "<h1>Hello World !"</h1>";
+	return "<h1>Hello World !</h1>";
 });
 ```
 
