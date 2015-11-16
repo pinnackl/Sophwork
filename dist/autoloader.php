@@ -7,9 +7,6 @@
  *	Namespace autoloader
  */
 
-/**
- * DEPRECATED
- */
 // function __autoload($c)
 // {
 // // Autoloader
