@@ -59,7 +59,7 @@ class Session implements ServiceProviderInterface
 	 * @param array $options Session configuration options.
 	 * 
 	 */
-	public function init (SophworkApp $app, Array $parameters = [])
+	public function init (SophworkApp $app, array $parameters = array())
 	{
 		session_cache_limiter('nocache'); // Default behaviour (No cache)
 		session_name("SessionID");
