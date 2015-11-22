@@ -61,7 +61,7 @@ Then you need to define your routes
  * 		- post
  * 	You can also attribute them a name so you can use UrlGenerator to create links
  */
-$app->get('/', function(SophworkApp $app, requests $request) {
+$app->get('/', function(SophworkApp $app, Requests $request) {
 	return "<h1>Hello World !</h1>";
 });
 ```
