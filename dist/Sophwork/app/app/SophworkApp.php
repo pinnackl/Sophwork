@@ -34,6 +34,7 @@ class SophworkApp extends Sophwork
 	protected $after;
 
 	private $_factory;
+	public $_depenencies;
 	/**
 	 *	@param none
 	 *	instanciate all Sophwork classes :
@@ -78,6 +79,8 @@ class SophworkApp extends Sophwork
 		$this->debug 				= false;
 
 		$this->_factory 			= [];
+
+		$this->_depenencies			= [];
 	}
 	
 	public function __set($param, $value) {
@@ -132,7 +135,17 @@ class SophworkApp extends Sophwork
 	public function inject($depenency) 
 	{
 		$depenencyName = $depenency->init($this);
+
+		$this->_depenencies[$depenencyName] = $depenency;
 		$this->$depenencyName = $depenency;
+	}
+
+	public function boot()
+	{
+		foreach ($this->_depenencies as $key => $value) {
+			$this->$key = $value;
+			$this->$key->init($this);
+		}
 	}
 
 	/**
@@ -182,6 +195,8 @@ class SophworkApp extends Sophwork
 	// FIXME : To refactor
 	public function run()
 	{
+		$this->boot();
+
 		//	Factory
 		$this->_factory['request'] = new \Sophwork\modules\handlers\requests\Requests;
 
